@@ -5,6 +5,10 @@
     "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
   "repository": "https://github.com/Esri/arcgis-html-sanitizer.git",
+  "bugs": {
+    "url": "https://github.com/Esri/arcgis-html-sanitizer/issues"
+  },
+  "homepage": "https://github.com/Esri/arcgis-html-sanitizer#readme",
   "author": "Esri",
   "license": "Apache-2.0",
   "private": true,
