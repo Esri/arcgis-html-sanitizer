@@ -1,1 +1,1 @@
-# @esri/arcgis-sanitize-html
+# @esri/arcgis-html-sanitizer

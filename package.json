@@ -1,10 +1,10 @@
 {
-  "name": "@esri/arcgis-sanitize-html",
+  "name": "@esri/arcgis-html-sanitizer",
   "version": "0.1.0",
   "description":
     "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
-  "repository": "https://github.com/Esri/arcgis-sanitize-html.git",
+  "repository": "https://github.com/Esri/arcgis-html-sanitizer.git",
   "author": "Esri",
   "license": "Apache-2.0",
   "private": true,
@@ -19,6 +19,14 @@
     "test:watch": "jest --coverage --watch"
   },
   "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
     "globals": {
       "ts-jest": {
         "skipBabel": true
