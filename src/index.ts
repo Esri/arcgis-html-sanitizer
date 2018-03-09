@@ -7,6 +7,7 @@ import xss from 'xss';
  * @class Sanitizer
  */
 export class Sanitizer {
+  // Supported HTML Spec: https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm
   public readonly arcgisWhiteList: XSS.IWhiteList = {
     a: ['href', 'target', 'style'],
     img: ['src', 'width', 'height', 'border', 'alt', 'style'],
@@ -67,11 +68,14 @@ export class Sanitizer {
     let xssFilterOptions: XSS.IFilterXSSOptions;
 
     if (filterOptions && !extendDefaults) {
+      // Override the defaults
       xssFilterOptions = filterOptions;
     } else if (filterOptions && extendDefaults) {
+      // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       Object.keys(filterOptions).forEach(key => {
         if (key === 'whiteList') {
+          // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
             this.arcgisWhiteList,
             filterOptions.whiteList || {}
@@ -81,11 +85,13 @@ export class Sanitizer {
         }
       });
     } else {
+      // Only use the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       xssFilterOptions.whiteList = this.arcgisWhiteList;
     }
 
     this.xssFilterOptions = xssFilterOptions;
+    // Make this readable to tests
     this._xssFilter = new xss.FilterXSS(xssFilterOptions);
   }
 
