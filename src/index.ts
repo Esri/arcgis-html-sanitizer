@@ -1,69 +1,92 @@
 import xss from 'xss';
 
+/**
+ * The Sanitizer Class
+ *
+ * @export
+ * @class Sanitizer
+ */
 export class Sanitizer {
-  private xssFilter: XSS.ICSSFilter;
-  private readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
-    whiteList: {
-      a: ['href', 'target', 'style'],
-      img: ['src', 'width', 'height', 'border', 'alt', 'style'],
-      video: [
-        'autoplay',
-        'controls',
-        'height',
-        'loop',
-        'muted',
-        'poster',
-        'preload',
-        'src',
-        'width'
-      ],
-      audio: ['autoplay', 'controls', 'loop', 'muted', 'preload', 'src'],
-      span: ['style'],
-      table: [
-        'width',
-        'height',
-        'cellpadding',
-        'cellspacing',
-        'border',
-        'style'
-      ],
-      div: ['style', 'class'],
-      font: ['size', 'color', 'style'],
-      tr: ['height', 'valign', 'align', 'style'],
-      td: [
-        'height',
-        'width',
-        'valign',
-        'align',
-        'colspan',
-        'rowspan',
-        'nowrap',
-        'style'
-      ],
-      th: [
-        'height',
-        'width',
-        'valign',
-        'align',
-        'colspan',
-        'rowspan',
-        'nowrap',
-        'style'
-      ],
-      b: [],
-      strong: [],
-      i: [],
-      em: [],
-      br: [],
-      p: [],
-      li: [],
-      ul: [],
-      tbody: []
-    }
+  public readonly arcgisWhiteList: XSS.IWhiteList = {
+    a: ['href', 'target', 'style'],
+    img: ['src', 'width', 'height', 'border', 'alt', 'style'],
+    video: [
+      'autoplay',
+      'controls',
+      'height',
+      'loop',
+      'muted',
+      'poster',
+      'preload',
+      'src',
+      'width'
+    ],
+    audio: ['autoplay', 'controls', 'loop', 'muted', 'preload', 'src'],
+    span: ['style'],
+    table: ['width', 'height', 'cellpadding', 'cellspacing', 'border', 'style'],
+    div: ['style', 'class'],
+    font: ['size', 'color', 'style'],
+    tr: ['height', 'valign', 'align', 'style'],
+    td: [
+      'height',
+      'width',
+      'valign',
+      'align',
+      'colspan',
+      'rowspan',
+      'nowrap',
+      'style'
+    ],
+    th: [
+      'height',
+      'width',
+      'valign',
+      'align',
+      'colspan',
+      'rowspan',
+      'nowrap',
+      'style'
+    ],
+    b: [],
+    strong: [],
+    i: [],
+    em: [],
+    br: [],
+    p: [],
+    li: [],
+    ul: [],
+    tbody: []
   };
+  public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
+    allowCommentTag: true
+  };
+  public readonly xssFilterOptions: XSS.IFilterXSSOptions;
+  private _xssFilter: XSS.ICSSFilter;
 
-  constructor() {
-    this.xssFilter = new xss.FilterXSS(this.arcgisFilterOptions);
+  constructor(filterOptions?: XSS.IFilterXSSOptions, extendDefaults?: boolean) {
+    let xssFilterOptions: XSS.IFilterXSSOptions;
+
+    if (filterOptions && !extendDefaults) {
+      xssFilterOptions = filterOptions;
+    } else if (filterOptions && extendDefaults) {
+      xssFilterOptions = Object.create(this.arcgisFilterOptions);
+      Object.keys(filterOptions).forEach(key => {
+        if (key === 'whiteList') {
+          xssFilterOptions.whiteList = this._extendObjectOfArrays([
+            this.arcgisWhiteList,
+            filterOptions.whiteList || {}
+          ]);
+        } else {
+          xssFilterOptions[key] = filterOptions[key];
+        }
+      });
+    } else {
+      xssFilterOptions = Object.create(this.arcgisFilterOptions);
+      xssFilterOptions.whiteList = this.arcgisWhiteList;
+    }
+
+    this.xssFilterOptions = xssFilterOptions;
+    this._xssFilter = new xss.FilterXSS(xssFilterOptions);
   }
 
   /**
@@ -74,7 +97,7 @@ export class Sanitizer {
    * @memberof Sanitizer
    */
   public sanitize(htmlString: string): string {
-    return this.xssFilter.process(htmlString);
+    return this._xssFilter.process(htmlString);
   }
 
   /**
@@ -86,5 +109,32 @@ export class Sanitizer {
    */
   public isValidHtml(htmlString: string): boolean {
     return htmlString === this.sanitize(htmlString);
+  }
+
+  /**
+   * Extends an object of arrays by by concatenating arrays of the same object
+   * keys. If the if the previous key's value is not an array, the next key's
+   * value will replace the previous key. This method is used for extending the
+   * whiteList in the XSS filter options.
+   *
+   * @private
+   * @param {Array<{}>} objects An array of objects.
+   * @returns {{}} The extended object.
+   * @memberof Sanitizer
+   */
+  private _extendObjectOfArrays(objects: Array<{}>): {} {
+    const finalObj = {};
+
+    objects.forEach(obj => {
+      Object.keys(obj).forEach(key => {
+        if (Array.isArray(obj[key]) && Array.isArray(finalObj[key])) {
+          finalObj[key] = finalObj[key].concat(obj[key]);
+        } else {
+          finalObj[key] = obj[key];
+        }
+      });
+    });
+
+    return finalObj;
   }
 }

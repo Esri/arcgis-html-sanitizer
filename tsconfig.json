@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "target": "es5",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
     "sourceMap": true,

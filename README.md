@@ -86,6 +86,25 @@ const sanitizedHtml = sanitizer.sanitize(
 // sanitizedHtml => <img src="https://example.com/fake-image.jpg" />
 ```
 
+#### Customizing Filter Options
+
+Override the default XSS filter options by passing a valid js-css options object as the first parameter of the constructor. Options available here: https://github.com/leizongmin/js-xss#custom-filter-rules.
+
+You can also extend the default options instead of overriding them by passing `true` as the second parameter of the constructor. When extending
+the filter options `whiteList`, the attribute arrays will automatically
+be concatenated to the defaults instead of replacing them.
+
+```js
+const customSanitizer = new Sanitizer({
+  whiteList: {
+    a: ['data-example']
+  },
+  escapeHtml: function () {
+    ...
+  }
+}, true /* extend defaults */);
+```
+
 ### Issues
 
 If something isn't working the way you expected, please take a look at [previously logged issues](https://github.com/Esri/arcgis-html-sanitizer/issues) first. Have you found a new bug? Want to request a new feature? We'd [**love**](https://github.com/Esri/arcgis-html-sanitizer/issues/new) to hear from you.
