@@ -1,12 +1,12 @@
 # @esri/arcgis-html-sanitizer
 
-This utility is a simple wrapper around the [js-xss](https://github.com/leizongmin/js-xss) library that will configure `js-xss` to sanitizes strings according to the [ArcGIS Supported HTML spec](https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm). It also
-includes a few additional helper methods to make easier to validate strings and
+This utility is a simple wrapper around the [js-xss](https://github.com/leizongmin/js-xss) library that will configure `js-xss` to sanitize strings according to the [ArcGIS Supported HTML spec](https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm). It also
+includes a few additional helper methods to validate strings and
 prevent XSS attacks.
 
 ## Table of Contents
 
-* [Why js-xss?\*\*](#why-js-xss)
+* [Why `js-xss`?](#why-js-xss)
 * [Installation](#installation)
 * [Usage](#usage)
 * [Issues](#issues)
@@ -14,11 +14,11 @@ prevent XSS attacks.
 * [Contributing](#contributing)
 * [License](#license)
 
-### Why [js-xss](https://github.com/leizongmin/js-xss)?\*\*
+### Why [`js-xss`](https://github.com/leizongmin/js-xss)?
 
-js-xss is lightweight (5.5k gzipped)
-library that is license under the [MIT open source license](https://github.com/leizongmin/js-xss#license). It is also highly customizable
-and works well in NodeJS applications and in the browser.
+[`js-xss`](https://github.com/leizongmin/js-xss) is lightweight (5.5k gzipped)
+library with an [MIT](https://github.com/leizongmin/js-xss#license)license. It is also highly customizable
+and works well in both Node.js applications and in the browser.
 
 ### Installation
 
@@ -113,7 +113,7 @@ If you're looking for help you can also post issues on [GIS Stackexchange](http:
 
 ### Versioning
 
-For transparency into the release cycle and in striving to maintain backward compatibility, @esri/arcgis-rest-js is maintained under Semantic Versioning guidelines and will adhere to these rules whenever possible.
+For transparency into the release cycle and in striving to maintain backward compatibility, @esri/arcgis-html-sanitizer is maintained under Semantic Versioning guidelines and will adhere to these rules whenever possible.
 
 For more information on SemVer, please visit <http://semver.org/>.
 
