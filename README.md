@@ -119,7 +119,7 @@ For more information on SemVer, please visit <http://semver.org/>.
 
 ### Contributing
 
-Esri welcomes contributions from anyone and everyone.
+EEsri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
 
 ### License
 
