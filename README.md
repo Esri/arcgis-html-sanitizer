@@ -4,6 +4,29 @@ This utility is a simple wrapper around the [js-xss](https://github.com/leizongm
 includes a few additional helper methods to make easier to validate strings and
 prevent XSS attacks.
 
+**WARNING**: This utility will sanitize and escape a string according to the
+ArcGIS Online supported HTML specification. The sanitized string can be inserted
+into the `DOM` via a method like `element.innerHTML = sanitizedHtml`. However,
+you should never insert the sanitized string in the following scenarios:
+
+```
+<script>...NEVER PUT UNTRUSTED DATA HERE...</script>   Directly in a script
+<!--...NEVER PUT UNTRUSTED DATA HERE...-->             Inside an HTML comment
+<div ...NEVER PUT UNTRUSTED DATA HERE...=test />       In an attribute name
+<NEVER PUT UNTRUSTED DATA HERE... href="/test" />      In a tag name
+<style>...NEVER PUT UNTRUSTED DATA HERE...</style>     Directly in CSS
+```
+
+You should also not extend the sanitizer to whitelist the following
+tags: `script, style, noscript`.
+
+In order to prevent additional attacks, this library should only be used if the following requirements are met: UTF-8 character set, JavaScript environment
+(NodeJS or Browser), and modern browsers (IE11, Edge, Safari, Chrome, Firefox,
+Opera, iOS Safari, and Mobile Chrome).
+
+For more information about inserting the sanitized string safely, see this
+article: https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet.
+
 ## Table of Contents
 
 * [Why js-xss?\*\*](#why-js-xss)
