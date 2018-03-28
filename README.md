@@ -132,8 +132,6 @@ const customSanitizer = new Sanitizer({
 
 If something isn't working the way you expected, please take a look at [previously logged issues](https://github.com/Esri/arcgis-html-sanitizer/issues) first. Have you found a new bug? Want to request a new feature? We'd [**love**](https://github.com/Esri/arcgis-html-sanitizer/issues/new) to hear from you.
 
-If you're looking for help you can also post issues on [GIS Stackexchange](http://gis.stackexchange.com/questions/ask?tags=esri-oss).
-
 ### Versioning
 
 For transparency into the release cycle and in striving to maintain backward compatibility, @esri/arcgis-html-sanitizer is maintained under Semantic Versioning guidelines and will adhere to these rules whenever possible.
