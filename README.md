@@ -136,13 +136,49 @@ If you're looking for help you can also post issues on [GIS Stackexchange](http:
 
 ### Versioning
 
-For transparency into the release cycle and in striving to maintain backward compatibility, @esri/arcgis-rest-js is maintained under Semantic Versioning guidelines and will adhere to these rules whenever possible.
+For transparency into the release cycle and in striving to maintain backward compatibility, @esri/arcgis-html-sanitizer is maintained under Semantic Versioning guidelines and will adhere to these rules whenever possible.
 
 For more information on SemVer, please visit <http://semver.org/>.
 
 ### Contributing
 
 Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
+
+#### Developer Instructions
+
+Install Dependencies
+
+```sh
+yarn install
+```
+
+Test
+
+```sh
+yarn test
+```
+
+Test in development
+
+```sh
+yarn run test --watch
+```
+
+Build compiled output:
+
+* ES Module outputs to `dist/esm/index.js`.
+* Node Module outputs to `dist/node/index.js`.
+* UMD Module outputs to `dist/umd/arcgis-html-sanitizer.js` and `dist/umd/arcgis-html-sanitizer.min.js`.
+
+```sh
+yarn build
+```
+
+Lint and fix errors
+
+```sh
+yarn run lint:fix
+```
 
 ### License
 
