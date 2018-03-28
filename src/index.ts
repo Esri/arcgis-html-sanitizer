@@ -4,7 +4,8 @@
  * js-xss
  * Copyright (c) 2012-2017 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
  * http://ucdok.com
- * The MIT License, see https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
+ * The MIT License, see
+ * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
  * */
 import xss from 'xss';
 
