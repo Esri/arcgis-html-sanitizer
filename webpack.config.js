@@ -25,7 +25,15 @@ module.exports = (env, argv) => {
           '\n' +
           `Copyright (c) ${new Date().getFullYear()} - Environmental Systems Research Institute, Inc.` +
           '\n' +
-          `${pkg.license}`
+          `${pkg.license}` +
+          '\n\n' +
+          `js-xss` +
+          '\n' +
+          `Copyright (c) 2012-2017 Zongmin Lei(雷宗民) <leizongmin@gmail.com>` +
+          '\n' +
+          `http://ucdok.com` +
+          '\n' +
+          `MIT License, see https://github.com/leizongmin/js-xss/blob/master/LICENSE for details`
       })
     ],
     output: {
