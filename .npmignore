@@ -10,7 +10,7 @@ coverage
 
 # Source
 src/
-travis.yml
+.travis.yml
 tsconfig.json
 tslint.json
 webpack.config.js
