@@ -10,6 +10,10 @@ coverage
 
 # Source
 src/
+travis.yml
+tsconfig.json
+tslint.json
+webpack.config.js
 
 # Dependency directories
 node_modules/
@@ -26,3 +30,5 @@ typings/
 # Misc
 .DS_Store
 .vscode/
+yarn.lock
+.gitignore
