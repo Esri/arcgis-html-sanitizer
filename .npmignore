@@ -8,6 +8,9 @@ yarn-error.log*
 # Coverage directory used by tools like istanbul
 coverage
 
+# Source
+src/
+
 # Dependency directories
 node_modules/
 
@@ -22,3 +25,4 @@ typings/
 
 # Misc
 .DS_Store
+.vscode/

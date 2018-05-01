@@ -40,7 +40,7 @@ article: https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_C
 ### Why [`js-xss`](https://github.com/leizongmin/js-xss)?
 
 [`js-xss`](https://github.com/leizongmin/js-xss) is lightweight (5.5k gzipped)
-library with an [MIT](https://github.com/leizongmin/js-xss#license)license. It is also highly customizable
+library with an [MIT](https://github.com/leizongmin/js-xss#license) license. It is also highly customizable
 and works well in both Node.js applications and in the browser.
 
 ### Installation
