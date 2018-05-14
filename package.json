@@ -1,6 +1,6 @@
 {
   "name": "@esri/arcgis-html-sanitizer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description":
     "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
@@ -42,11 +42,12 @@
     "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
   },
   "dependencies": {
+    "lodash.isplainobject": "^4.0.6",
     "xss": "^0.3.8"
   },
   "devDependencies": {
     "@types/jest": "^22.2.0",
-    "@types/lodash.merge": "^4.6.3",
+    "@types/lodash.isplainobject": "^4.0.3",
     "jest": "^22.4.2",
     "ts-jest": "^22.4.1",
     "ts-loader": "^4.0.1",

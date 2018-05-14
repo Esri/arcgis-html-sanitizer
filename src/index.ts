@@ -6,8 +6,24 @@
  * http://ucdok.com
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
+ * 
+ * Lodash/isPlainObject
+ * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
+ * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
+import isPlainObject from 'lodash.isplainobject';
 import xss from 'xss';
+
+/**
+ * The response from the validate method
+ *
+ * @export
+ * @interface IValidationResponse
+ */
+export interface IValidationResponse {
+  isValid: boolean;
+  sanitized: any;
+}
 
 /**
  * The Sanitizer Class
@@ -105,25 +121,47 @@ export class Sanitizer {
   }
 
   /**
-   * Sanitizes a string to remove invalid HTML tags.
+   * Sanitizes value to remove invalid HTML tags.
    *
-   * @param {string} htmlString The string to sanitize.
-   * @returns {string} A string with the invalid HTML removed.
+   * Note: If the value passed does not contain a valid JSON data type (String,
+   * Number, JSON Object, Array, Boolean, or null), the value will be nullified.
+   *
+   * @param {any} value The value to sanitize.
+   * @returns {any} The sanitized value.
    * @memberof Sanitizer
    */
-  public sanitize(htmlString: string): string {
-    return this._xssFilter.process(htmlString);
+  public sanitize(value: any): any {
+    switch (typeof value) {
+      case 'number':
+        if (isNaN(value) || !isFinite(value)) {
+          return null;
+        }
+        return value;
+      case 'boolean':
+        return value;
+      case 'string':
+        return this._xssFilter.process(value);
+      case 'object':
+        return this._iterateOverObject(value);
+      default:
+        return null;
+    }
   }
 
   /**
-   * Checks if a string only contains valid HTML.
+   * Checks if a value only contains valid HTML.
    *
-   * @param {string} htmlString The string to validate.
+   * @param {any} value The value to validate.
    * @returns {boolean}
    * @memberof Sanitizer
    */
-  public isValidHtml(htmlString: string): boolean {
-    return htmlString === this.sanitize(htmlString);
+  public validate(value: any): IValidationResponse {
+    const sanitized = this.sanitize(value);
+
+    return {
+      isValid: value === sanitized,
+      sanitized
+    };
   }
 
   /**
@@ -151,5 +189,53 @@ export class Sanitizer {
     });
 
     return finalObj;
+  }
+
+  /**
+   * Iterate over a plain object or array to deeply sanitize each value.
+   *
+   * @private
+   * @param {object} obj The object to iterate over.
+   * @returns {(object | null)} The sanitized object.
+   * @memberof Sanitizer
+   */
+  private _iterateOverObject(obj: object): object | null {
+    try {
+      let hasChanged = false;
+      let changedObj;
+      if (Array.isArray(obj)) {
+        changedObj = obj.reduce((prev, value) => {
+          const validation = this.validate(value);
+          if (validation.isValid) {
+            return prev.concat([value]);
+          } else {
+            hasChanged = true;
+            return prev.concat([validation.sanitized]);
+          }
+        }, []);
+      } else if (!isPlainObject(obj)) {
+        return null;
+      } else {
+        const keys = Object.keys(obj);
+        changedObj = keys.reduce((prev, key) => {
+          const value = obj[key];
+          const validation = this.validate(value);
+          if (validation.isValid) {
+            prev[key] = value;
+          } else {
+            hasChanged = true;
+            prev[key] = validation.sanitized;
+          }
+          return prev;
+        }, {});
+      }
+
+      if (hasChanged) {
+        return changedObj;
+      }
+      return obj;
+    } catch (err) {
+      return null;
+    }
   }
 }
