@@ -1,6 +1,6 @@
 # @esri/arcgis-html-sanitizer
 
-This utility is a simple wrapper around the [js-xss](https://github.com/leizongmin/js-xss) library that will configure `js-xss` to sanitize strings according to the [ArcGIS Supported HTML spec](https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm). It also
+This utility is a simple wrapper around the [js-xss](https://github.com/leizongmin/js-xss) library that will configure `js-xss` to sanitize a value according to the [ArcGIS Supported HTML spec](https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm). It also
 includes a few additional helper methods to validate strings and
 prevent XSS attacks.
 
@@ -36,10 +36,11 @@ article: https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_C
 * [Versioning](#versioning)
 * [Contributing](#contributing)
 * [License](#license)
+* [Dependencies](#dependencies)
 
 ### Why [`js-xss`](https://github.com/leizongmin/js-xss)?
 
-[`js-xss`](https://github.com/leizongmin/js-xss) is lightweight (5.5k gzipped)
+[js-xss](https://github.com/leizongmin/js-xss) is lightweight (5.5k gzipped)
 library with an [MIT](https://github.com/leizongmin/js-xss#license) license. It is also highly customizable
 and works well in both Node.js applications and in the browser.
 
@@ -88,7 +89,7 @@ Load as script tag
 <script src="path/to/arcgis-html-sanitizer.min.js"></script>
 
 <!-- CDN (Adjust the version as needed) -->
-<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.2.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.3.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
 ```
 
 #### Basic Usage
@@ -97,16 +98,50 @@ Load as script tag
 // Instantiate a new Sanitizer object
 const sanitizer = new Sanitizer();
 
-// Check if a string contains invalid HTML
-const isValid = sanitizer.isValidHtml(
-  '<img src="https://example.com/fake-image.jpg" onerror="alert(1);" />'
-);
-// isValid => false
-
+// Sanitize a string
 const sanitizedHtml = sanitizer.sanitize(
   '<img src="https://example.com/fake-image.jpg" onerror="alert(1);" />'
 );
 // sanitizedHtml => <img src="https://example.com/fake-image.jpg" />
+
+// Check if a string contains invalid HTML
+const validation = sanitizer.validate(
+  '<img src="https://example.com/fake-image.jpg" onerror="alert(1);" />'
+);
+// validation => {
+//  isValid: false
+//  sanitized: '<img src="https://example.com/fake-image.jpg" />'
+// }
+```
+
+#### Sanitize JSON
+
+In addition to sanitizing strings, this utility also allows you to sanitize full
+JSON objects. This can be useful if you want to sanitize all the app data
+returned from the server before using it in your application.
+
+If the value passed does not contain a valid JSON data type (String,
+Number, JSON Object, Array, Boolean, or null), the value will be nullified.
+
+**WARNING**: You should never concatenate strings from multiple values in the
+JSON. Strings values may be safe and pass the sanitizer when separated but
+become dangerous after they are concatenated. This is intended as a convenience
+method only. You should run the strings through the sanitizer again after they
+have been concatenated.
+
+```js
+// Instantiate a new Sanitizer object
+const sanitizer = new Sanitizer();
+
+// Deeply sanitize a JSON object
+const sanitizedJSON = sanitizer.sanitize({
+  sample: ['<img src="https://example.com/fake-image.jpg" onerror="alert(1);\
+    " />']
+});
+
+// sanitizedJSON => {
+//  "sample": ["<img src=\"https://example.com/fake-image.jpg\" />"]
+// }
 ```
 
 #### Customizing Filter Options
@@ -195,3 +230,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 A copy of the license is available in the repository's [LICENSE](./LICENSE) file.
+
+### Dependencies
+
+* [js-xss](https://github.com/leizongmin/js-xss) ([MIT](https://github.com/leizongmin/js-xss#license))
+* [Lodash isPlainObject](https://www.npmjs.com/package/lodash.isplainobject) ([MIT](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE))
