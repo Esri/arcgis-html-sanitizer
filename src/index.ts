@@ -73,12 +73,12 @@ export class Sanitizer {
       'nowrap',
       'style'
     ],
+    p: ['style'],
     b: [],
     strong: [],
     i: [],
     em: [],
     br: [],
-    p: [],
     li: [],
     ul: [],
     tbody: []

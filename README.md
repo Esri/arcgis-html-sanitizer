@@ -29,14 +29,14 @@ article: https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_C
 
 ## Table of Contents
 
-* [Why `js-xss`?](#why-js-xss)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Issues](#issues)
-* [Versioning](#versioning)
-* [Contributing](#contributing)
-* [License](#license)
-* [Dependencies](#dependencies)
+- [Why `js-xss`?](#why-js-xss)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Issues](#issues)
+- [Versioning](#versioning)
+- [Contributing](#contributing)
+- [License](#license)
+- [Dependencies](#dependencies)
 
 ### Why [`js-xss`](https://github.com/leizongmin/js-xss)?
 
@@ -89,7 +89,7 @@ Load as script tag
 <script src="path/to/arcgis-html-sanitizer.min.js"></script>
 
 <!-- CDN (Adjust the version as needed) -->
-<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.4.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.5.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
 ```
 
 #### Basic Usage
@@ -199,9 +199,9 @@ yarn run test --watch
 
 Build compiled output:
 
-* ES Module outputs to `dist/esm/index.js`.
-* Node Module outputs to `dist/node/index.js`.
-* UMD Module outputs to `dist/umd/arcgis-html-sanitizer.js` and `dist/umd/arcgis-html-sanitizer.min.js`.
+- ES Module outputs to `dist/esm/index.js`.
+- Node Module outputs to `dist/node/index.js`.
+- UMD Module outputs to `dist/umd/arcgis-html-sanitizer.js` and `dist/umd/arcgis-html-sanitizer.min.js`.
 
 ```sh
 yarn build
@@ -233,5 +233,5 @@ A copy of the license is available in the repository's [LICENSE](./LICENSE) file
 
 ### Dependencies
 
-* [js-xss](https://github.com/leizongmin/js-xss) ([MIT](https://github.com/leizongmin/js-xss#license))
-* [Lodash isPlainObject](https://www.npmjs.com/package/lodash.isplainobject) ([MIT](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE))
+- [js-xss](https://github.com/leizongmin/js-xss) ([MIT](https://github.com/leizongmin/js-xss#license))
+- [Lodash isPlainObject](https://www.npmjs.com/package/lodash.isplainobject) ([MIT](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE))
