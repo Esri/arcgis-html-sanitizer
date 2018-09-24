@@ -89,7 +89,7 @@ Load as script tag
 <script src="path/to/arcgis-html-sanitizer.min.js"></script>
 
 <!-- CDN (Adjust the version as needed) -->
-<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.6.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.7.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
 ```
 
 #### Basic Usage
