@@ -1,6 +1,6 @@
 {
   "name": "@esri/arcgis-html-sanitizer",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
   "repository": "https://github.com/Esri/arcgis-html-sanitizer.git",
@@ -11,7 +11,7 @@
   "author": "Esri",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "yarn run build:node && yarn run build:esm && yarn run build:umd",
+    "build": "rimraf dist && yarn run build:node && yarn run build:esm && yarn run build:umd",
     "build:esm": "tsc --module ESNext --outDir ./dist/esm --declaration",
     "build:node": "tsc --module commonjs --outDir ./dist/node --declaration",
     "build:umd": "webpack --mode development && webpack --mode production",
@@ -48,13 +48,14 @@
     ]
   },
   "dependencies": {
+    "@types/lodash.isplainobject": "^4.0.4",
     "lodash.isplainobject": "^4.0.6",
     "xss": "^1.0.3"
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",
-    "@types/lodash.isplainobject": "^4.0.4",
     "jest": "^23.6.0",
+    "rimraf": "^2.6.2",
     "ts-jest": "^23.10.1",
     "ts-loader": "^5.2.0",
     "tslint": "^5.11.0",

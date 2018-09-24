@@ -11,8 +11,8 @@
  * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
  * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
-import isPlainObject from 'lodash.isplainobject';
-import xss from 'xss';
+import isPlainObject from "lodash.isplainobject";
+import xss from "xss";
 
 /**
  * The response from the validate method
@@ -34,46 +34,46 @@ export interface IValidationResponse {
 export class Sanitizer {
   // Supported HTML Spec: https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm
   public readonly arcgisWhiteList: XSS.IWhiteList = {
-    a: ['href', 'target', 'style'],
-    img: ['src', 'width', 'height', 'border', 'alt', 'style'],
+    a: ["href", "target", "style"],
+    img: ["src", "width", "height", "border", "alt", "style"],
     video: [
-      'autoplay',
-      'controls',
-      'height',
-      'loop',
-      'muted',
-      'poster',
-      'preload',
-      'src',
-      'width'
+      "autoplay",
+      "controls",
+      "height",
+      "loop",
+      "muted",
+      "poster",
+      "preload",
+      "src",
+      "width"
     ],
-    audio: ['autoplay', 'controls', 'loop', 'muted', 'preload', 'src'],
-    span: ['style'],
-    table: ['width', 'height', 'cellpadding', 'cellspacing', 'border', 'style'],
-    div: ['style', 'class'],
-    font: ['size', 'color', 'style'],
-    tr: ['height', 'valign', 'align', 'style'],
+    audio: ["autoplay", "controls", "loop", "muted", "preload", "src"],
+    span: ["style"],
+    table: ["width", "height", "cellpadding", "cellspacing", "border", "style"],
+    div: ["style", "class"],
+    font: ["size", "color", "style"],
+    tr: ["height", "valign", "align", "style"],
     td: [
-      'height',
-      'width',
-      'valign',
-      'align',
-      'colspan',
-      'rowspan',
-      'nowrap',
-      'style'
+      "height",
+      "width",
+      "valign",
+      "align",
+      "colspan",
+      "rowspan",
+      "nowrap",
+      "style"
     ],
     th: [
-      'height',
-      'width',
-      'valign',
-      'align',
-      'colspan',
-      'rowspan',
-      'nowrap',
-      'style'
+      "height",
+      "width",
+      "valign",
+      "align",
+      "colspan",
+      "rowspan",
+      "nowrap",
+      "style"
     ],
-    p: ['style'],
+    p: ["style"],
     b: [],
     strong: [],
     i: [],
@@ -99,7 +99,7 @@ export class Sanitizer {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       Object.keys(filterOptions).forEach(key => {
-        if (key === 'whiteList') {
+        if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
             this.arcgisWhiteList,
@@ -132,16 +132,16 @@ export class Sanitizer {
    */
   public sanitize(value: any): any {
     switch (typeof value) {
-      case 'number':
+      case "number":
         if (isNaN(value) || !isFinite(value)) {
           return null;
         }
         return value;
-      case 'boolean':
+      case "boolean":
         return value;
-      case 'string':
+      case "string":
         return this._xssFilter.process(value);
-      case 'object':
+      case "object":
         return this._iterateOverObject(value);
       default:
         return null;
