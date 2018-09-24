@@ -16,7 +16,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
-    "types": ["xss", "lodash.isplainobject"]
+    "types": ["xss", "lodash.isplainobject", "jest"]
   },
   "exclude": ["node_modules", "./src/**/*.test.ts"],
   "include": ["./src/**/*.ts"]
