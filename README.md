@@ -65,13 +65,13 @@ yarn add @esri/arcgis-html-sanitizer
 ES Modules
 
 ```js
-import { Sanitizer } from '@esri/arcgis-html-sanitizer';
+import { Sanitizer } from "@esri/arcgis-html-sanitizer";
 ```
 
 CommonJS
 
 ```js
-const Sanitizer = require('@esri/arcgis-html-sanitizer').Sanitizer;
+const Sanitizer = require("@esri/arcgis-html-sanitizer").Sanitizer;
 ```
 
 AMD (Use UMD version in ./dist/umd folder)
@@ -89,7 +89,7 @@ Load as script tag
 <script src="path/to/arcgis-html-sanitizer.min.js"></script>
 
 <!-- CDN (Adjust the version as needed) -->
-<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.5.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@esri/arcgis-html-sanitizer@0.6.0/dist/umd/arcgis-html-sanitizer.min.js"></script>
 ```
 
 #### Basic Usage
