@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "lib": ["es6"],
     "target": "es5",
     "module": "ESNext",
     "moduleResolution": "node",

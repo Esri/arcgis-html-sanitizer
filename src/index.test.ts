@@ -1,10 +1,10 @@
-import { Sanitizer } from './index';
+import { Sanitizer } from "./index";
 
 // This file contains basic tests that validate the the utility methods.
 // For XSS attack sanitizer testing see xss.test.ts
 
-describe('Sanitizer', () => {
-  test('creates the Sanitizer object and extends options appropriately', () => {
+describe("Sanitizer", () => {
+  test("creates the Sanitizer object and extends options appropriately", () => {
     // Test with no arguments
     const sanitizer1 = new Sanitizer();
     const defaultSanitizer1 = new Sanitizer();
@@ -27,6 +27,7 @@ describe('Sanitizer', () => {
     expect(sanitizer2.xssFilterOptions).toEqual(filterOptions2);
 
     // Passing an empty whitelist
+    // @ts-ignore
     const sanitizer3 = new Sanitizer({ whiteList: null }, true);
     const defaultSanitizer3 = new Sanitizer();
     const defaultOptions3 = Object.create(
@@ -40,7 +41,7 @@ describe('Sanitizer', () => {
     expect(sanitizer4.xssFilterOptions).toEqual({ whiteList: { a: [] } });
   });
 
-  test('sanitizes a value', () => {
+  test("sanitizes a value", () => {
     const sanitizer = new Sanitizer();
 
     // Numbers
@@ -54,7 +55,7 @@ describe('Sanitizer', () => {
     expect(sanitizer.sanitize(false)).toBe(false);
 
     // Strings
-    const basicString = 'Hello World';
+    const basicString = "Hello World";
     const validHtml = 'Hello <a href="https://example.org">Link</a>';
     const invalidHtml =
       'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />';
@@ -131,19 +132,20 @@ describe('Sanitizer', () => {
     expect(sanitizer.sanitize(Intl.NumberFormat)).toBe(null);
 
     // Others
+    // @ts-ignore
     expect(sanitizer.sanitize(arguments)).toBe(null);
-    expect(sanitizer.sanitize(() => 'test')).toBe(null);
-    expect(sanitizer.sanitize(new Error('test'))).toBe(null);
+    expect(sanitizer.sanitize(() => "test")).toBe(null);
+    expect(sanitizer.sanitize(new Error("test"))).toBe(null);
   });
 
-  test('deeply sanitizes an object', () => {
+  test("deeply sanitizes an object", () => {
     const sanitizer = new Sanitizer();
 
     // If object is clean, it return the exact same object;
     const cleanObj1 = {
       a: null,
       b: true,
-      c: 'clean string'
+      c: "clean string"
     };
     const result1 = sanitizer.sanitize(cleanObj1);
     expect(result1).toBe(cleanObj1);
@@ -152,34 +154,34 @@ describe('Sanitizer', () => {
     const result2 = sanitizer.sanitize({
       a: 1,
       b: true,
-      c: 'clean string',
+      c: "clean string",
       d: 'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />',
       e: [
         1,
         true,
         'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />',
-        ['inner', 'array']
+        ["inner", "array"]
       ],
       f: new Date()
     });
     const expected2 = {
       a: 1,
       b: true,
-      c: 'clean string',
+      c: "clean string",
       d: 'Evil <img src="https://exmaple.org/myImg.jpg" />',
       e: [
         1,
         true,
         'Evil <img src="https://exmaple.org/myImg.jpg" />',
-        ['inner', 'array']
+        ["inner", "array"]
       ],
       f: null
     };
     expect(result2).toEqual(expected2);
   });
 
-  test('checks if string is valid html', () => {
-    const basicString = 'Hello World';
+  test("checks if string is valid html", () => {
+    const basicString = "Hello World";
     const validHtml = 'Hello <a href="https://example.org">Link</a>';
     const invalidHtml =
       'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />';
@@ -191,9 +193,9 @@ describe('Sanitizer', () => {
     expect(sanitizer.validate(invalidHtml).isValid).toBe(false);
   });
 
-  test('extends an object of array by concatenating arrays', () => {
+  test("extends an object of array by concatenating arrays", () => {
     // tslint:disable-next-line:no-string-literal
-    const _extendObjectOfArrays = new Sanitizer()['_extendObjectOfArrays'];
+    const _extendObjectOfArrays = new Sanitizer()["_extendObjectOfArrays"];
 
     const result = _extendObjectOfArrays([
       { a: [1, 2] },
@@ -204,9 +206,9 @@ describe('Sanitizer', () => {
     expect(result).toEqual({ a: [1, 2, 3, 4], b: [1, 2, 3, 4] });
   });
 
-  test('returns null of iteration fails', () => {
+  test("returns null of iteration fails", () => {
     // tslint:disable-next-line:no-string-literal
-    const _iterateOverObject = new Sanitizer()['_iterateOverObject'];
+    const _iterateOverObject = new Sanitizer()["_iterateOverObject"];
 
     // Will fail because "this" is not defined
     expect(_iterateOverObject({ a: 1 })).toBe(null);
