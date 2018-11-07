@@ -1,5 +1,7 @@
 # @esri/arcgis-html-sanitizer
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Esri/arcgis-html-sanitizer.svg)](https://greenkeeper.io/)
+
 This utility is a simple wrapper around the [js-xss](https://github.com/leizongmin/js-xss) library that will configure `js-xss` to sanitize a value according to the [ArcGIS Supported HTML spec](https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm). It also
 includes a few additional helper methods to validate strings and
 prevent XSS attacks.
