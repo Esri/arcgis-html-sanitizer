@@ -12,6 +12,10 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/
+        },
+        {
+          test: [require.resolve('cssfilter'), require.resolve('xss')],
+          use: 'imports-loader?window=>undefined'
         }
       ]
     },
