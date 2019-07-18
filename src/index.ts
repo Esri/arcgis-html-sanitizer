@@ -78,6 +78,7 @@ export class Sanitizer {
     strong: [],
     i: [],
     em: [],
+    u: [],
     br: [],
     li: [],
     ul: [],
