@@ -12,6 +12,10 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/
+        },
+        {
+          test: [require.resolve('cssfilter'), require.resolve('xss')],
+          use: 'imports-loader?window=>undefined'
         }
       ]
     },
@@ -47,6 +51,7 @@ module.exports = (env, argv) => {
         argv.mode === 'production' ? '.min' : ''
       }.js`,
       path: path.resolve(__dirname, 'dist/umd'),
+      globalObject: 'this',
       library: 'Sanitizer',
       libraryExport: 'Sanitizer',
       libraryTarget: 'umd'
