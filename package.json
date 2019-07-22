@@ -29,11 +29,6 @@
         "statements": 100
       }
     },
-    "globals": {
-      "ts-jest": {
-        "skipBabel": true
-      }
-    },
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -48,23 +43,23 @@
     ]
   },
   "dependencies": {
-    "@types/lodash.isplainobject": "^4.0.4",
     "lodash.isplainobject": "^4.0.6",
-    "xss": "^1.0.3"
+    "xss": "^1.0.6"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^24.0.15",
+    "@types/lodash.isplainobject": "^4.0.6",
     "imports-loader": "^0.8.0",
-    "jest": "^23.6.0",
-    "rimraf": "^2.6.2",
-    "ts-jest": "^24.0.0",
-    "ts-loader": "^5.2.0",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.15.0",
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3",
+    "ts-jest": "^24.0.2",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.0.3",
-    "webpack": "^4.19.1",
-    "webpack-cli": "^3.1.1"
+    "typescript": "^3.5.3",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6"
   },
   "publishConfig": {
     "access": "public"
