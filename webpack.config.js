@@ -51,6 +51,7 @@ module.exports = (env, argv) => {
         argv.mode === 'production' ? '.min' : ''
       }.js`,
       path: path.resolve(__dirname, 'dist/umd'),
+      globalObject: 'this',
       library: 'Sanitizer',
       libraryExport: 'Sanitizer',
       libraryTarget: 'umd'
