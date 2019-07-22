@@ -50,7 +50,7 @@ export class Sanitizer {
     audio: ["autoplay", "controls", "loop", "muted", "preload", "src"],
     span: ["style"],
     table: ["width", "height", "cellpadding", "cellspacing", "border", "style"],
-    div: ["style", "class"],
+    div: ["style", "align"],
     font: ["size", "color", "style"],
     tr: ["height", "valign", "align", "style"],
     td: [
@@ -78,9 +78,12 @@ export class Sanitizer {
     strong: [],
     i: [],
     em: [],
+    u: [],
     br: [],
     li: [],
     ul: [],
+    ol: [],
+    hr: [],
     tbody: []
   };
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
