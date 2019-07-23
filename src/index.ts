@@ -86,8 +86,48 @@ export class Sanitizer {
     hr: [],
     tbody: []
   };
+  public readonly allowedProtocols: string[] = [
+    "http",
+    "https",
+    "mailto",
+    "iform",
+    "tel",
+    "flow",
+    "lfmobile",
+    "arcgis-navigator",
+    "arcgis-appstudio-player",
+    "arcgis-survey123",
+    "arcgis-collector",
+    "arcgis-workforce",
+    "arcgis-explorer",
+    "arcgis-trek2there",
+    "mspbi",
+    "comgooglemaps",
+    "pdfefile",
+    "pdfehttp",
+    "pdfehttps",
+    "boxapp",
+    "boxemm",
+    "awb",
+    "awbs",
+    "gropen",
+    "radarscope"
+  ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
-    allowCommentTag: true
+    allowCommentTag: true,
+    safeAttrValue: (tag: string, name: string, value: string, cssFilter: XSS.ICSSFilter): string => {
+      // take over safe attribute filtering for `a` tag `href` attribute only,
+      // otherwise pass onto the default XSS.safeAttrValue
+      if (tag === "a" && name === "href") {
+        const protocol = this._trim(value.substring(0, value.indexOf("://")));
+        if (!(value === "/" || value === "#" || value[0] === "#" || this.allowedProtocols.indexOf(protocol) > -1)) {
+          return "";
+        } else {
+          return xss.escapeAttrValue(value);
+        }
+      }
+      return xss.safeAttrValue(tag, name, value, cssFilter);
+    }
   };
   public readonly xssFilterOptions: XSS.IFilterXSSOptions;
   private _xssFilter: XSS.ICSSFilter;
@@ -240,5 +280,14 @@ export class Sanitizer {
     } catch (err) {
       return null;
     }
+  }
+
+  /**
+   * Trim whitespace from the start and ends of a string.
+   * @param {string} val The string to trim.
+   * @returns {string} The trimmed string.
+   */
+  private _trim(val: string): string {
+    return (String.prototype.trim) ? val.trim() : val.replace(/(^\s*)|(\s*$)/g, "");
   }
 }

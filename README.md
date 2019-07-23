@@ -165,6 +165,30 @@ const customSanitizer = new Sanitizer({
 }, true /* extend defaults */);
 ```
 
+If you override the built-in filtering using custom filter rules, know that you are taking full control of that particular filtering method. To do this safely, you can pass anything you don't want to handle specifically on to the `js-xss` filtering method.
+
+In this example, we want to strip any `href` for the domain `www.mydomain.tld` and pass along everything else to the `js-xss` `safeAttrValue` method.
+
+```js
+import xss from "xss";
+
+const customSanitizer = new Sanitizer({
+  safeAttrValue: function (tag, name, value, cssFilter) {
+    // strip anchor href attributes that point to www.mydomain.tld on any protocol,
+    // and allow any other href attributes
+    if (tag === "a" && name ==="href") {
+      if (value.indexOf("//www.mydomain.tld") > -1) {
+        return "";
+      } else {
+        return xss.escapeAttrValue(value);
+      }
+    }
+    // pass everything else onto the `js-xss` `safeAttrValue` method
+    return xss.safeAttrValue(tag, name, value, cssFilter);
+  }
+});
+```
+
 ### Issues
 
 If something isn't working the way you expected, please take a look at [previously logged issues](https://github.com/Esri/arcgis-html-sanitizer/issues) first. Have you found a new bug? Want to request a new feature? We'd [**love**](https://github.com/Esri/arcgis-html-sanitizer/issues/new) to hear from you.
