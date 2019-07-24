@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 Environmental Systems Research Institute, Inc.
+/* Copyright (c) 2019 Environmental Systems Research Institute, Inc.
  * Apache-2.0
  *
  * js-xss
@@ -6,13 +6,13 @@
  * http://ucdok.com
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
- * 
+ *
  * Lodash/isPlainObject
  * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
  * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
-import isPlainObject from "lodash.isplainobject";
-import xss from "xss";
+import isPlainObject from 'lodash.isplainobject';
+import xss from 'xss';
 
 /**
  * The response from the validate method
@@ -34,46 +34,46 @@ export interface IValidationResponse {
 export class Sanitizer {
   // Supported HTML Spec: https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm
   public readonly arcgisWhiteList: XSS.IWhiteList = {
-    a: ["href", "target", "style"],
-    img: ["src", "width", "height", "border", "alt", "style"],
+    a: ['href', 'target', 'style'],
+    img: ['src', 'width', 'height', 'border', 'alt', 'style'],
     video: [
-      "autoplay",
-      "controls",
-      "height",
-      "loop",
-      "muted",
-      "poster",
-      "preload",
-      "src",
-      "width"
+      'autoplay',
+      'controls',
+      'height',
+      'loop',
+      'muted',
+      'poster',
+      'preload',
+      'src',
+      'width'
     ],
-    audio: ["autoplay", "controls", "loop", "muted", "preload", "src"],
-    span: ["style"],
-    table: ["width", "height", "cellpadding", "cellspacing", "border", "style"],
-    div: ["style", "align"],
-    font: ["size", "color", "style"],
-    tr: ["height", "valign", "align", "style"],
+    audio: ['autoplay', 'controls', 'loop', 'muted', 'preload', 'src'],
+    span: ['style'],
+    table: ['width', 'height', 'cellpadding', 'cellspacing', 'border', 'style'],
+    div: ['style', 'align'],
+    font: ['size', 'color', 'style'],
+    tr: ['height', 'valign', 'align', 'style'],
     td: [
-      "height",
-      "width",
-      "valign",
-      "align",
-      "colspan",
-      "rowspan",
-      "nowrap",
-      "style"
+      'height',
+      'width',
+      'valign',
+      'align',
+      'colspan',
+      'rowspan',
+      'nowrap',
+      'style'
     ],
     th: [
-      "height",
-      "width",
-      "valign",
-      "align",
-      "colspan",
-      "rowspan",
-      "nowrap",
-      "style"
+      'height',
+      'width',
+      'valign',
+      'align',
+      'colspan',
+      'rowspan',
+      'nowrap',
+      'style'
     ],
-    p: ["style"],
+    p: ['style'],
     b: [],
     strong: [],
     i: [],
@@ -87,41 +87,53 @@ export class Sanitizer {
     tbody: []
   };
   public readonly allowedProtocols: string[] = [
-    "http",
-    "https",
-    "mailto",
-    "iform",
-    "tel",
-    "flow",
-    "lfmobile",
-    "arcgis-navigator",
-    "arcgis-appstudio-player",
-    "arcgis-survey123",
-    "arcgis-collector",
-    "arcgis-workforce",
-    "arcgis-explorer",
-    "arcgis-trek2there",
-    "mspbi",
-    "comgooglemaps",
-    "pdfefile",
-    "pdfehttp",
-    "pdfehttps",
-    "boxapp",
-    "boxemm",
-    "awb",
-    "awbs",
-    "gropen",
-    "radarscope"
+    'http',
+    'https',
+    'mailto',
+    'iform',
+    'tel',
+    'flow',
+    'lfmobile',
+    'arcgis-navigator',
+    'arcgis-appstudio-player',
+    'arcgis-survey123',
+    'arcgis-collector',
+    'arcgis-workforce',
+    'arcgis-explorer',
+    'arcgis-trek2there',
+    'mspbi',
+    'comgooglemaps',
+    'pdfefile',
+    'pdfehttp',
+    'pdfehttps',
+    'boxapp',
+    'boxemm',
+    'awb',
+    'awbs',
+    'gropen',
+    'radarscope'
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
-    safeAttrValue: (tag: string, name: string, value: string, cssFilter: XSS.ICSSFilter): string => {
+    safeAttrValue: (
+      tag: string,
+      name: string,
+      value: string,
+      cssFilter: XSS.ICSSFilter
+    ): string => {
       // take over safe attribute filtering for `a` tag `href` attribute only,
       // otherwise pass onto the default XSS.safeAttrValue
-      if (tag === "a" && name === "href") {
-        const protocol = this._trim(value.substring(0, value.indexOf("://")));
-        if (!(value === "/" || value === "#" || value[0] === "#" || this.allowedProtocols.indexOf(protocol) > -1)) {
-          return "";
+      if (tag === 'a' && name === 'href') {
+        const protocol = this._trim(value.substring(0, value.indexOf('://')));
+        if (
+          !(
+            value === '/' ||
+            value === '#' ||
+            value[0] === '#' ||
+            this.allowedProtocols.indexOf(protocol) > -1
+          )
+        ) {
+          return '';
         } else {
           return xss.escapeAttrValue(value);
         }
@@ -142,7 +154,7 @@ export class Sanitizer {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       Object.keys(filterOptions).forEach(key => {
-        if (key === "whiteList") {
+        if (key === 'whiteList') {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
             this.arcgisWhiteList,
@@ -175,16 +187,16 @@ export class Sanitizer {
    */
   public sanitize(value: any): any {
     switch (typeof value) {
-      case "number":
+      case 'number':
         if (isNaN(value) || !isFinite(value)) {
           return null;
         }
         return value;
-      case "boolean":
+      case 'boolean':
         return value;
-      case "string":
+      case 'string':
         return this._xssFilter.process(value);
-      case "object":
+      case 'object':
         return this._iterateOverObject(value);
       default:
         return null;
@@ -288,6 +300,8 @@ export class Sanitizer {
    * @returns {string} The trimmed string.
    */
   private _trim(val: string): string {
-    return (String.prototype.trim) ? val.trim() : val.replace(/(^\s*)|(\s*$)/g, "");
+    return String.prototype.trim
+      ? val.trim()
+      : val.replace(/(^\s*)|(\s*$)/g, '');
   }
 }
