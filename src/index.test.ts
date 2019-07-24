@@ -213,4 +213,101 @@ describe("Sanitizer", () => {
     // Will fail because "this" is not defined
     expect(_iterateOverObject({ a: 1 })).toBe(null);
   });
+
+  test("check for allowed protocols", () => {
+    const disallowedProtocols: string[] = [
+      "ftp",
+      "smb"
+    ];
+    const allowedProtocols: string[] = [
+      "http",
+      "https",
+      "mailto",
+      "iform",
+      "tel",
+      "flow",
+      "lfmobile",
+      "arcgis-navigator",
+      "arcgis-appstudio-player",
+      "arcgis-survey123",
+      "arcgis-collector",
+      "arcgis-workforce",
+      "arcgis-explorer",
+      "arcgis-trek2there",
+      "mspbi",
+      "comgooglemaps",
+      "pdfefile",
+      "pdfehttp",
+      "pdfehttps",
+      "boxapp",
+      "boxemm",
+      "awb",
+      "awbs",
+      "gropen",
+      "radarscope"
+    ];
+    const rootAnchor = '<a href="/">Link</a>';
+    const hashAnchor = '<a href="#">Link</a>';
+    const hashIdAnchor = '<a href="#test">Link</a>';
+
+    const sanitizer = new Sanitizer();
+
+    // Ensure the allowed protocols are not stripped out
+    allowedProtocols.forEach((protocol) => {
+      const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
+      expect(sanitizer.sanitize(anchor)).toBe(anchor);
+    });
+    // Ensure disallowed protocols are still disallowed and are sanitized
+    disallowedProtocols.forEach((protocol) => {
+      const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
+      expect(sanitizer.sanitize(anchor)).toBe("<a href>Link</a>");
+    });
+
+    // Ensure we can still use "/" and "#" as anchor href values
+    expect(sanitizer.sanitize(rootAnchor)).toBe(rootAnchor);
+    expect(sanitizer.sanitize(hashAnchor)).toBe(hashAnchor);
+    expect(sanitizer.sanitize(hashIdAnchor)).toBe(hashIdAnchor);
+  });
+
+  test("check for some of the allowed tags and attributes", () => {
+    const u = "<u>String</u>";
+    const hr = "<hr>";
+    const ol = "<ol><li>List Item 1</li><li>List Item 2</li></ol>";
+    const safeDiv = '<div style="display:none;">Text content</div>';
+    const unsafeDiv = '<div onerror="alert(1)">Text content</div>';
+    const strippedDiv = "<div>Text content</div>";
+
+    const sanitizer = new Sanitizer();
+
+    expect(sanitizer.sanitize(u)).toBe(u);
+    expect(sanitizer.sanitize(hr)).toBe(hr);
+    expect(sanitizer.sanitize(ol)).toBe(ol);
+    expect(sanitizer.sanitize(safeDiv)).toBe(safeDiv);
+    expect(sanitizer.sanitize(unsafeDiv)).toBe(strippedDiv);
+  });
+
+  test("trims a string", () => {
+    // tslint:disable-next-line:no-string-literal
+    const _trim = new Sanitizer()["_trim"];
+
+    const str = " \tString\n\r \t";
+    const trimmedString = "String";
+
+    // Save String.prototype.trim
+    const trimPrototype = String.prototype.trim;
+
+    // Remove String.prototype.trim for regex path tests
+    delete String.prototype.trim;
+
+    // Using regex
+    expect(_trim(str)).toBe(trimmedString);
+    expect(_trim(trimmedString)).toBe(trimmedString);
+
+    // Return trim to String prototype
+    String.prototype.trim = trimPrototype;
+
+    // Using String.prototype.trim
+    expect(_trim(str)).toBe(trimmedString);
+    expect(_trim(trimmedString)).toBe(trimmedString);
+  });
 });
