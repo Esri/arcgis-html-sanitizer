@@ -260,9 +260,15 @@ describe('Sanitizer', () => {
       expect(sanitizer.sanitize(anchor)).toBe('<a href>Link</a>');
     });
 
+    // Check for protocols that don't include //, such as tel or mailto
+    const tel = `<a href="tel:+1-111-111-1111">Tel</a>`;
+    const mailto = `<a href="mailto:someuser@someurl.tld">Email</a>`;
+    expect(sanitizer.sanitize(tel)).toBe(tel);
+    expect(sanitizer.sanitize(mailto)).toBe(mailto);
+
     // Check for caps and mixed case protocols
     const capsHttps = `<a href="HTTPS://someurl.tld?param1=1">Link</a>`;
-    const capsTel = `<a href="tel:+1-111-111-1111">Tel</a>`;
+    const capsTel = `<a href="TEL:+1-111-111-1111">Tel</a>`;
     const mixedHttp = `<a href="hTTp://someurl.tld?param1=1">Link</a>`;
     expect(sanitizer.sanitize(capsHttps)).toBe(capsHttps);
     expect(sanitizer.sanitize(capsTel)).toBe(capsTel);
