@@ -124,13 +124,13 @@ export class Sanitizer {
       // take over safe attribute filtering for `a` tag `href` attribute only,
       // otherwise pass onto the default XSS.safeAttrValue
       if (tag === 'a' && name === 'href') {
-        const protocol = this._trim(value.substring(0, value.indexOf('://')));
+        const protocol = this._trim(value.substring(0, value.indexOf(':')));
         if (
           !(
             value === '/' ||
             value === '#' ||
             value[0] === '#' ||
-            this.allowedProtocols.indexOf(protocol) > -1
+            this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
           )
         ) {
           return '';

@@ -260,6 +260,14 @@ describe('Sanitizer', () => {
       expect(sanitizer.sanitize(anchor)).toBe('<a href>Link</a>');
     });
 
+    // Check for caps and mixed case protocols
+    const capsHttps = `<a href="HTTPS://someurl.tld?param1=1">Link</a>`;
+    const capsTel = `<a href="tel:+1-111-111-1111">Tel</a>`;
+    const mixedHttp = `<a href="hTTp://someurl.tld?param1=1">Link</a>`;
+    expect(sanitizer.sanitize(capsHttps)).toBe(capsHttps);
+    expect(sanitizer.sanitize(capsTel)).toBe(capsTel);
+    expect(sanitizer.sanitize(mixedHttp)).toBe(mixedHttp);
+
     // Ensure we can still use "/" and "#" as anchor href values
     expect(sanitizer.sanitize(rootAnchor)).toBe(rootAnchor);
     expect(sanitizer.sanitize(hashAnchor)).toBe(hashAnchor);
