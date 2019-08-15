@@ -51,7 +51,7 @@
     "@types/lodash.isplainobject": "^4.0.6",
     "imports-loader": "^0.8.0",
     "jest": "^24.8.0",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
