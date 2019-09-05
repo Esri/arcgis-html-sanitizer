@@ -11,7 +11,7 @@ ArcGIS Online supported HTML specification. The sanitized string can be inserted
 into the `DOM` via a method like `element.innerHTML = sanitizedHtml`. However,
 you should never insert the sanitized string in the following scenarios:
 
-```
+```html
 <script>...NEVER PUT UNTRUSTED DATA HERE...</script>   Directly in a script
 <!--...NEVER PUT UNTRUSTED DATA HERE...-->             Inside an HTML comment
 <div ...NEVER PUT UNTRUSTED DATA HERE...=test />       In an attribute name
@@ -144,6 +144,29 @@ const sanitizedJSON = sanitizer.sanitize({
 // sanitizedJSON => {
 //  "sample": ["<img src=\"https://example.com/fake-image.jpg\" />"]
 // }
+```
+
+#### Sanitize URLs
+
+The ability to sanitize URL strings has been specifically broken out to a public
+method, `sanitizeUrl`. This can be very useful if you want to sanitize URLs
+according to the built-in rules, yet you don't want to necessarily extend the
+whitelist and implement custom filtering options to force sanitization of
+specific tag attributes.
+
+```js
+// Instantiate a new Sanitizer object
+const sanitizer = new Sanitizer();
+
+// Sanitize a URL with a valid protocol
+const supportedProtocol = sanitizer.sanitizeUrl("https://example.com/about/index.html");
+
+// supportedProtocol => "https://example.com/about/index.html"
+
+// Sanitize a URL with an invalid protocol
+const unsupportedProtocol = sanitizer.sanitizeUrl("smb://example.com/path/to/file.html");
+
+// unsupportedProtocol => ""
 ```
 
 #### Customizing Filter Options
