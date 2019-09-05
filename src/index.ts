@@ -123,20 +123,8 @@ export class Sanitizer {
     ): string => {
       // take over safe attribute filtering for `a` tag `href` attribute only,
       // otherwise pass onto the default XSS.safeAttrValue
-      if (tag === 'a' && name === 'href') {
-        const protocol = this._trim(value.substring(0, value.indexOf(':')));
-        if (
-          !(
-            value === '/' ||
-            value === '#' ||
-            value[0] === '#' ||
-            this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
-          )
-        ) {
-          return '';
-        } else {
-          return xss.escapeAttrValue(value);
-        }
+      if ((tag === 'a' && name === 'href') || (tag === 'img' && name === 'src')) {
+        return this.sanitizeUrl(value);
       }
       return xss.safeAttrValue(tag, name, value, cssFilter);
     }
@@ -200,6 +188,28 @@ export class Sanitizer {
         return this._iterateOverObject(value);
       default:
         return null;
+    }
+  }
+
+  /**
+   * Sanitizes a URL string following the allowed protocols and sanitization rules.
+   * 
+   * @param {string} value The URL to sanitize.
+   * @returns {string} The sanitized URL.
+   */
+  public sanitizeUrl(value: string): string {
+    const protocol = this._trim(value.substring(0, value.indexOf(':')));
+    if (
+      !(
+        value === '/' ||
+        value === '#' ||
+        value[0] === '#' ||
+        this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
+      )
+    ) {
+      return '';
+    } else {
+      return xss.escapeAttrValue(value);
     }
   }
 

@@ -214,8 +214,10 @@ describe('Sanitizer', () => {
     expect(_iterateOverObject({ a: 1 })).toBe(null);
   });
 
-  test('check for allowed protocols', () => {
-    const disallowedProtocols: string[] = ['ftp', 'smb'];
+  test('checks for allowed protocols', () => {
+    const sanitizer = new Sanitizer();
+
+    // Ensure the allowed protocols are not stripped out
     const allowedProtocols: string[] = [
       'http',
       'https',
@@ -243,41 +245,103 @@ describe('Sanitizer', () => {
       'gropen',
       'radarscope'
     ];
-    const rootAnchor = '<a href="/">Link</a>';
-    const hashAnchor = '<a href="#">Link</a>';
-    const hashIdAnchor = '<a href="#test">Link</a>';
-
-    const sanitizer = new Sanitizer();
-
-    // Ensure the allowed protocols are not stripped out
-    allowedProtocols.forEach(protocol => {
+    allowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
+      const image = `<img src="${protocol}://someurl.tld/path/to/image.svg">`;
       expect(sanitizer.sanitize(anchor)).toBe(anchor);
+      expect(sanitizer.sanitize(image)).toBe(image);
     });
     // Ensure disallowed protocols are still disallowed and are sanitized
-    disallowedProtocols.forEach(protocol => {
+    const disallowedProtocols: string[] = ['ftp', 'smb'];
+    disallowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
+      const image = `<img src="${protocol}://someurl.tld/path/to/image.svg">`;
       expect(sanitizer.sanitize(anchor)).toBe('<a href>Link</a>');
+      expect(sanitizer.sanitize(image)).toBe('<img src>');
     });
 
     // Check for protocols that don't include //, such as tel or mailto
-    const tel = `<a href="tel:+1-111-111-1111">Tel</a>`;
-    const mailto = `<a href="mailto:someuser@someurl.tld">Email</a>`;
-    expect(sanitizer.sanitize(tel)).toBe(tel);
-    expect(sanitizer.sanitize(mailto)).toBe(mailto);
+    const tel = "tel:+1-111-111-1111";
+    const mailto = "mailto:someuser@someurl.tld";
 
     // Check for caps and mixed case protocols
-    const capsHttps = `<a href="HTTPS://someurl.tld?param1=1">Link</a>`;
-    const capsTel = `<a href="TEL:+1-111-111-1111">Tel</a>`;
-    const mixedHttp = `<a href="hTTp://someurl.tld?param1=1">Link</a>`;
-    expect(sanitizer.sanitize(capsHttps)).toBe(capsHttps);
-    expect(sanitizer.sanitize(capsTel)).toBe(capsTel);
-    expect(sanitizer.sanitize(mixedHttp)).toBe(mixedHttp);
+    const capsHttps = "HTTPS://someurl.tld?param1=1";
+    const capsTel = "TEL:+1-111-111-1111";
+    const mixedHttp = "hTTp://someurl.tld?param1=1";
 
     // Ensure we can still use "/" and "#" as anchor href values
-    expect(sanitizer.sanitize(rootAnchor)).toBe(rootAnchor);
-    expect(sanitizer.sanitize(hashAnchor)).toBe(hashAnchor);
-    expect(sanitizer.sanitize(hashIdAnchor)).toBe(hashIdAnchor);
+    const root = "/";
+    const hash = "#";
+    const hashId = "#test";
+
+    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach((uri: string) => {
+      const anchor = `<a href="${uri}">Link</a>`;
+      const image = `<img src="${uri}">`;
+      expect(sanitizer.sanitize(anchor)).toBe(anchor);
+      expect(sanitizer.sanitize(image)).toBe(image);
+    });
+  });
+
+  test('sanitizes URLs', () => {
+    const sanitizer = new Sanitizer();
+
+    // Ensure allowed protocols are passed through untouched
+    const allowedProtocols: string[] = [
+      'http',
+      'https',
+      'mailto',
+      'iform',
+      'tel',
+      'flow',
+      'lfmobile',
+      'arcgis-navigator',
+      'arcgis-appstudio-player',
+      'arcgis-survey123',
+      'arcgis-collector',
+      'arcgis-workforce',
+      'arcgis-explorer',
+      'arcgis-trek2there',
+      'mspbi',
+      'comgooglemaps',
+      'pdfefile',
+      'pdfehttp',
+      'pdfehttps',
+      'boxapp',
+      'boxemm',
+      'awb',
+      'awbs',
+      'gropen',
+      'radarscope'
+    ];
+    allowedProtocols.forEach((protocol: string) => {
+      const url = `${protocol}://someurl.tld?param1=1&param2=2`;
+      expect(sanitizer.sanitizeUrl(url)).toBe(url);
+    });
+
+    // Ensure disallowed protocols are still disallowed and are sanitized
+    const disallowedProtocols: string[] = ['ftp', 'smb'];
+    disallowedProtocols.forEach((protocol: string) => {
+      const url = `${protocol}://someurl.tld?param1=1&param2=2`;
+      expect(sanitizer.sanitizeUrl(url)).toBe('');
+    });
+
+    // Check for protocols that don't include //, such as tel or mailto
+    const tel = "tel:+1-111-111-1111";
+    const mailto = "mailto:someuser@someurl.tld";
+
+    // Check for caps and mixed case protocols
+    const capsHttps = "HTTPS://someurl.tld?param1=1";
+    const capsTel = "TEL:+1-111-111-1111";
+    const mixedHttp = "hTTp://someurl.tld?param1=1";
+
+    // Ensure we can still use "/" and "#" as anchor href values
+    const root = "/";
+    const hash = "#";
+    const hashId = "#test";
+
+    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach((url: string) => {
+      expect(sanitizer.sanitizeUrl(url)).toBe(url);
+    });
   });
 
   test('check for some of the allowed tags and attributes', () => {
