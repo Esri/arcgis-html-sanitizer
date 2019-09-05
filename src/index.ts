@@ -121,9 +121,13 @@ export class Sanitizer {
       value: string,
       cssFilter: XSS.ICSSFilter
     ): string => {
-      // take over safe attribute filtering for `a` tag `href` attribute only,
-      // otherwise pass onto the default XSS.safeAttrValue
-      if ((tag === 'a' && name === 'href') || (tag === 'img' && name === 'src')) {
+      // Take over safe attribute filtering for `a` `href`, `img` `src`,
+      // `audio` `src`, and `video` `src` attributes, otherwise pass onto the
+      // default `XSS.safeAttrValue` method.
+      if (
+        (tag === 'a' && name === 'href') ||
+        ((tag === 'img' || tag === 'audio' || tag === 'video') && name === 'src')
+      ) {
         return this.sanitizeUrl(value);
       }
       return xss.safeAttrValue(tag, name, value, cssFilter);
