@@ -56,7 +56,7 @@
     "ts-loader": "^6.0.4",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
-    "tslint-config-standard": "^8.0.1",
+    "tslint-config-standard": "^9.0.0",
     "typescript": "^3.6.2",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8"
