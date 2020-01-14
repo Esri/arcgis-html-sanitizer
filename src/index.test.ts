@@ -248,24 +248,28 @@ describe('Sanitizer', () => {
     allowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
       const image = `<img src="${protocol}://someurl.tld/path/to/image.svg">`;
-      const audio = `<audio src="${protocol}://someurl.tld/path/to/audio/file.mp3">`;
-      const video = `<video src="${protocol}://someurl.tld/path/to/video/file.mpeg">`;
+      const audio = `<audio controls><source src="${protocol}://someurl.tld/path/to/audio/file.mp3"></audio>`;
+      const video = `<video controls><source src="${protocol}://someurl.tld/path/to/video/file.mpeg"></video>`;
+      const source = `<source src="${protocol}://someurl.tld/path/to/audio/file.mp3">`;
       expect(sanitizer.sanitize(anchor)).toBe(anchor);
       expect(sanitizer.sanitize(image)).toBe(image);
       expect(sanitizer.sanitize(audio)).toBe(audio);
       expect(sanitizer.sanitize(video)).toBe(video);
+      expect(sanitizer.sanitize(source)).toBe(source);
     });
     // Ensure disallowed protocols are still disallowed and are sanitized
     const disallowedProtocols: string[] = ['ftp', 'smb'];
     disallowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
       const image = `<img src="${protocol}://someurl.tld/path/to/image.svg">`;
-      const audio = `<audio src="${protocol}://someurl.tld/path/to/audio/file.mp3">`;
-      const video = `<video src="${protocol}://someurl.tld/path/to/video/file.mpeg">`;
+      const audio = `<audio controls><source src="${protocol}://someurl.tld/path/to/audio/file.mp3"></audio>`;
+      const video = `<video controls><source src="${protocol}://someurl.tld/path/to/video/file.mpeg"></video>`;
+      const source = `<source src=${protocol}://someurl.tld/path/to/audio/file.mp3">`;
       expect(sanitizer.sanitize(anchor)).toBe('<a href>Link</a>');
       expect(sanitizer.sanitize(image)).toBe('<img src>');
-      expect(sanitizer.sanitize(audio)).toBe('<audio src>');
-      expect(sanitizer.sanitize(video)).toBe('<video src>');
+      expect(sanitizer.sanitize(audio)).toBe('<audio controls><source src></audio>');
+      expect(sanitizer.sanitize(video)).toBe('<video controls><source src></video>');
+      expect(sanitizer.sanitize(source)).toBe('<source src>');
     });
 
     // Check for protocols that don't include //, such as tel or mailto
@@ -285,12 +289,14 @@ describe('Sanitizer', () => {
     [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach((uri: string) => {
       const anchor = `<a href="${uri}">Link</a>`;
       const image = `<img src="${uri}">`;
-      const audio = `<audio src="${uri}">`;
-      const video = `<video src="${uri}">`;
+      const audio = `<audio><source src="${uri}"></audio>`;
+      const video = `<video><source src="${uri}"></audio>`;
+      const source = `<source src="${uri}">`;
       expect(sanitizer.sanitize(anchor)).toBe(anchor);
       expect(sanitizer.sanitize(image)).toBe(image);
       expect(sanitizer.sanitize(audio)).toBe(audio);
       expect(sanitizer.sanitize(video)).toBe(video);
+      expect(sanitizer.sanitize(source)).toBe(source);
     });
   });
 
@@ -363,6 +369,12 @@ describe('Sanitizer', () => {
     const safeDiv = '<div style="display:none;">Text content</div>';
     const unsafeDiv = '<div onerror="alert(1)">Text content</div>';
     const strippedDiv = '<div>Text content</div>';
+    const audio = `<audio controls><source src="http://someurl.tld/path/to/audio/file.mp3" type="audio/mpeg"></audio>`;
+    const video = `<video controls><source src="http://someurl.tld/path/to/video/file.mpeg" type="video/mpeg"></video>`;
+    const stripAudioSrc = `<audio controls src="http://someurl.tld/path/to/audio/file.mp3">`;
+    const stripVideoSrc = `<video controls src="http://someurl.tld/path/to/video/file.mpeg">`;
+    const strippedAudioSrc = '<audio controls>';
+    const strippedVideoSrc = '<video controls>';
 
     const sanitizer = new Sanitizer();
 
@@ -371,6 +383,10 @@ describe('Sanitizer', () => {
     expect(sanitizer.sanitize(ol)).toBe(ol);
     expect(sanitizer.sanitize(safeDiv)).toBe(safeDiv);
     expect(sanitizer.sanitize(unsafeDiv)).toBe(strippedDiv);
+    expect(sanitizer.sanitize(audio)).toBe(audio);
+    expect(sanitizer.sanitize(stripAudioSrc)).toBe(strippedAudioSrc);
+    expect(sanitizer.sanitize(video)).toBe(video);
+    expect(sanitizer.sanitize(stripVideoSrc)).toBe(strippedVideoSrc);
   });
 
   test('trims a string', () => {
