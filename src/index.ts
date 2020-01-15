@@ -25,6 +25,10 @@ export interface IValidationResponse {
   sanitized: any;
 }
 
+export interface IWhiteList extends XSS.IWhiteList {
+  source?: string[]
+}
+
 /**
  * The Sanitizer Class
  *
@@ -33,7 +37,7 @@ export interface IValidationResponse {
  */
 export class Sanitizer {
   // Supported HTML Spec: https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm
-  public readonly arcgisWhiteList: XSS.IWhiteList = {
+  public readonly arcgisWhiteList: IWhiteList = {
     a: ['href', 'target', 'style'],
     img: ['src', 'width', 'height', 'border', 'alt', 'style'],
     video: [
@@ -44,10 +48,10 @@ export class Sanitizer {
       'muted',
       'poster',
       'preload',
-      'src',
       'width'
     ],
-    audio: ['autoplay', 'controls', 'loop', 'muted', 'preload', 'src'],
+    audio: ['autoplay', 'controls', 'loop', 'muted', 'preload'],
+    source: ['media', 'src', 'type'],
     span: ['style'],
     table: ['width', 'height', 'cellpadding', 'cellspacing', 'border', 'style'],
     div: ['style', 'align'],
@@ -122,11 +126,11 @@ export class Sanitizer {
       cssFilter: XSS.ICSSFilter
     ): string => {
       // Take over safe attribute filtering for `a` `href`, `img` `src`,
-      // `audio` `src`, and `video` `src` attributes, otherwise pass onto the
+      // and `source` `src` attributes, otherwise pass onto the
       // default `XSS.safeAttrValue` method.
       if (
         (tag === 'a' && name === 'href') ||
-        ((tag === 'img' || tag === 'audio' || tag === 'video') && name === 'src')
+        ((tag === 'img' || tag === 'source') && name === 'src')
       ) {
         return this.sanitizeUrl(value);
       }
