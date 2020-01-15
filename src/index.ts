@@ -1,8 +1,8 @@
-/* Copyright (c) 2019 Environmental Systems Research Institute, Inc.
+/* Copyright (c) 2020 Environmental Systems Research Institute, Inc.
  * Apache-2.0
  *
  * js-xss
- * Copyright (c) 2012-2017 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
+ * Copyright (c) 2012-2018 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
  * http://ucdok.com
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
@@ -11,8 +11,8 @@
  * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
  * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
-import isPlainObject from 'lodash.isplainobject';
-import xss from 'xss';
+import isPlainObject from "lodash.isplainobject";
+import xss from "xss";
 
 /**
  * The response from the validate method
@@ -26,7 +26,7 @@ export interface IValidationResponse {
 }
 
 export interface IWhiteList extends XSS.IWhiteList {
-  source?: string[]
+  source?: string[];
 }
 
 /**
@@ -38,46 +38,46 @@ export interface IWhiteList extends XSS.IWhiteList {
 export class Sanitizer {
   // Supported HTML Spec: https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm
   public readonly arcgisWhiteList: IWhiteList = {
-    a: ['href', 'target', 'style'],
-    img: ['src', 'width', 'height', 'border', 'alt', 'style'],
+    a: ["href", "target", "style"],
+    img: ["src", "width", "height", "border", "alt", "style"],
     video: [
-      'autoplay',
-      'controls',
-      'height',
-      'loop',
-      'muted',
-      'poster',
-      'preload',
-      'width'
+      "autoplay",
+      "controls",
+      "height",
+      "loop",
+      "muted",
+      "poster",
+      "preload",
+      "width"
     ],
-    audio: ['autoplay', 'controls', 'loop', 'muted', 'preload'],
-    source: ['media', 'src', 'type'],
-    span: ['style'],
-    table: ['width', 'height', 'cellpadding', 'cellspacing', 'border', 'style'],
-    div: ['style', 'align'],
-    font: ['size', 'color', 'style'],
-    tr: ['height', 'valign', 'align', 'style'],
+    audio: ["autoplay", "controls", "loop", "muted", "preload"],
+    source: ["media", "src", "type"],
+    span: ["style"],
+    table: ["width", "height", "cellpadding", "cellspacing", "border", "style"],
+    div: ["style", "align"],
+    font: ["size", "color", "style"],
+    tr: ["height", "valign", "align", "style"],
     td: [
-      'height',
-      'width',
-      'valign',
-      'align',
-      'colspan',
-      'rowspan',
-      'nowrap',
-      'style'
+      "height",
+      "width",
+      "valign",
+      "align",
+      "colspan",
+      "rowspan",
+      "nowrap",
+      "style"
     ],
     th: [
-      'height',
-      'width',
-      'valign',
-      'align',
-      'colspan',
-      'rowspan',
-      'nowrap',
-      'style'
+      "height",
+      "width",
+      "valign",
+      "align",
+      "colspan",
+      "rowspan",
+      "nowrap",
+      "style"
     ],
-    p: ['style'],
+    p: ["style"],
     b: [],
     strong: [],
     i: [],
@@ -91,31 +91,31 @@ export class Sanitizer {
     tbody: []
   };
   public readonly allowedProtocols: string[] = [
-    'http',
-    'https',
-    'mailto',
-    'iform',
-    'tel',
-    'flow',
-    'lfmobile',
-    'arcgis-navigator',
-    'arcgis-appstudio-player',
-    'arcgis-survey123',
-    'arcgis-collector',
-    'arcgis-workforce',
-    'arcgis-explorer',
-    'arcgis-trek2there',
-    'mspbi',
-    'comgooglemaps',
-    'pdfefile',
-    'pdfehttp',
-    'pdfehttps',
-    'boxapp',
-    'boxemm',
-    'awb',
-    'awbs',
-    'gropen',
-    'radarscope'
+    "http",
+    "https",
+    "mailto",
+    "iform",
+    "tel",
+    "flow",
+    "lfmobile",
+    "arcgis-navigator",
+    "arcgis-appstudio-player",
+    "arcgis-survey123",
+    "arcgis-collector",
+    "arcgis-workforce",
+    "arcgis-explorer",
+    "arcgis-trek2there",
+    "mspbi",
+    "comgooglemaps",
+    "pdfefile",
+    "pdfehttp",
+    "pdfehttps",
+    "boxapp",
+    "boxemm",
+    "awb",
+    "awbs",
+    "gropen",
+    "radarscope"
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
@@ -129,8 +129,8 @@ export class Sanitizer {
       // and `source` `src` attributes, otherwise pass onto the
       // default `XSS.safeAttrValue` method.
       if (
-        (tag === 'a' && name === 'href') ||
-        ((tag === 'img' || tag === 'source') && name === 'src')
+        (tag === "a" && name === "href") ||
+        ((tag === "img" || tag === "source") && name === "src")
       ) {
         return this.sanitizeUrl(value);
       }
@@ -150,7 +150,7 @@ export class Sanitizer {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       Object.keys(filterOptions).forEach(key => {
-        if (key === 'whiteList') {
+        if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
             this.arcgisWhiteList,
@@ -183,16 +183,16 @@ export class Sanitizer {
    */
   public sanitize(value: any): any {
     switch (typeof value) {
-      case 'number':
+      case "number":
         if (isNaN(value) || !isFinite(value)) {
           return null;
         }
         return value;
-      case 'boolean':
+      case "boolean":
         return value;
-      case 'string':
+      case "string":
         return this._xssFilter.process(value);
-      case 'object':
+      case "object":
         return this._iterateOverObject(value);
       default:
         return null;
@@ -201,21 +201,21 @@ export class Sanitizer {
 
   /**
    * Sanitizes a URL string following the allowed protocols and sanitization rules.
-   * 
+   *
    * @param {string} value The URL to sanitize.
    * @returns {string} The sanitized URL.
    */
   public sanitizeUrl(value: string): string {
-    const protocol = this._trim(value.substring(0, value.indexOf(':')));
+    const protocol = this._trim(value.substring(0, value.indexOf(":")));
     if (
       !(
-        value === '/' ||
-        value === '#' ||
-        value[0] === '#' ||
+        value === "/" ||
+        value === "#" ||
+        value[0] === "#" ||
         this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
       )
     ) {
-      return '';
+      return "";
     } else {
       return xss.escapeAttrValue(value);
     }
@@ -320,6 +320,6 @@ export class Sanitizer {
   private _trim(val: string): string {
     return String.prototype.trim
       ? val.trim()
-      : val.replace(/(^\s*)|(\s*$)/g, '');
+      : val.replace(/(^\s*)|(\s*$)/g, "");
   }
 }

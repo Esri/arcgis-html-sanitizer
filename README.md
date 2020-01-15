@@ -12,11 +12,19 @@ into the `DOM` via a method like `element.innerHTML = sanitizedHtml`. However,
 you should never insert the sanitized string in the following scenarios:
 
 ```html
-<script>...NEVER PUT UNTRUSTED DATA HERE...</script>   Directly in a script
-<!--...NEVER PUT UNTRUSTED DATA HERE...-->             Inside an HTML comment
-<div ...NEVER PUT UNTRUSTED DATA HERE...=test />       In an attribute name
-<NEVER PUT UNTRUSTED DATA HERE... href="/test" />      In a tag name
-<style>...NEVER PUT UNTRUSTED DATA HERE...</style>     Directly in CSS
+<script>
+  ...NEVER PUT UNTRUSTED DATA HERE...
+</script>
+Directly in a script
+<!--...NEVER PUT UNTRUSTED DATA HERE...-->
+Inside an HTML comment
+<div ...NEVER PUT UNTRUSTED DATA HERE...="test" />
+In an attribute name <NEVER PUT UNTRUSTED DATA HERE... href="/test" /> In a tag
+name
+<style>
+  ...NEVER PUT UNTRUSTED DATA HERE...
+</style>
+Directly in CSS
 ```
 
 You should also not extend the sanitizer to whitelist the following
@@ -159,12 +167,16 @@ specific tag attributes.
 const sanitizer = new Sanitizer();
 
 // Sanitize a URL with a valid protocol
-const supportedProtocol = sanitizer.sanitizeUrl("https://example.com/about/index.html");
+const supportedProtocol = sanitizer.sanitizeUrl(
+  "https://example.com/about/index.html"
+);
 
 // supportedProtocol => "https://example.com/about/index.html"
 
 // Sanitize a URL with an invalid protocol
-const unsupportedProtocol = sanitizer.sanitizeUrl("smb://example.com/path/to/file.html");
+const unsupportedProtocol = sanitizer.sanitizeUrl(
+  "smb://example.com/path/to/file.html"
+);
 
 // unsupportedProtocol => ""
 ```
@@ -196,10 +208,10 @@ In this example, we want to strip any `href` for the domain `www.mydomain.tld` a
 import xss from "xss";
 
 const customSanitizer = new Sanitizer({
-  safeAttrValue: function (tag, name, value, cssFilter) {
+  safeAttrValue: function(tag, name, value, cssFilter) {
     // strip anchor href attributes that point to www.mydomain.tld on any protocol,
     // and allow any other href attributes
-    if (tag === "a" && name ==="href") {
+    if (tag === "a" && name === "href") {
       if (value.indexOf("//www.mydomain.tld") > -1) {
         return "";
       } else {
@@ -264,7 +276,7 @@ yarn run lint:fix
 
 ### License
 
-Copyright 2018 Esri
+Copyright 2020 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
