@@ -29,6 +29,12 @@ export interface IWhiteList extends XSS.IWhiteList {
   source?: string[];
 }
 
+/** Options to apply to sanitize metion */
+export interface ISanitizeOptions {
+  /* Don't convert undefined to null */
+  allowUndefined?: boolean;
+}
+
 /**
  * The Sanitizer Class
  *
@@ -181,12 +187,7 @@ export class Sanitizer {
    * @returns {any} The sanitized value.
    * @memberof Sanitizer
    */
-  public sanitize(
-    value: any,
-    options: {
-      allowUndefined?: boolean;
-    } = {}
-  ): any {
+  public sanitize(value: any, options: ISanitizeOptions = {}): any {
     switch (typeof value) {
       case "number":
         if (isNaN(value) || !isFinite(value)) {
@@ -198,7 +199,7 @@ export class Sanitizer {
       case "string":
         return this._xssFilter.process(value);
       case "object":
-        return this._iterateOverObject(value);
+        return this._iterateOverObject(value, options);
       default:
         if (options.allowUndefined && typeof value === "undefined") {
           return;
@@ -236,8 +237,11 @@ export class Sanitizer {
    * @returns {boolean}
    * @memberof Sanitizer
    */
-  public validate(value: any): IValidationResponse {
-    const sanitized = this.sanitize(value);
+  public validate(
+    value: any,
+    options: ISanitizeOptions = {}
+  ): IValidationResponse {
+    const sanitized = this.sanitize(value, options);
 
     return {
       isValid: value === sanitized,
@@ -280,13 +284,16 @@ export class Sanitizer {
    * @returns {(object | null)} The sanitized object.
    * @memberof Sanitizer
    */
-  private _iterateOverObject(obj: object): object | null {
+  private _iterateOverObject(
+    obj: object,
+    options: ISanitizeOptions = {}
+  ): object | null | void {
     try {
       let hasChanged = false;
       let changedObj;
       if (Array.isArray(obj)) {
         changedObj = obj.reduce((prev, value) => {
-          const validation = this.validate(value);
+          const validation = this.validate(value, options);
           if (validation.isValid) {
             return prev.concat([value]);
           } else {
@@ -295,12 +302,15 @@ export class Sanitizer {
           }
         }, []);
       } else if (!isPlainObject(obj)) {
+        if (options.allowUndefined && typeof obj === "undefined") {
+          return;
+        }
         return null;
       } else {
         const keys = Object.keys(obj);
         changedObj = keys.reduce((prev, key) => {
           const value = obj[key];
-          const validation = this.validate(value);
+          const validation = this.validate(value, options);
           if (validation.isValid) {
             prev[key] = value;
           } else {

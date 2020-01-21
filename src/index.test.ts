@@ -140,9 +140,25 @@ describe("Sanitizer", () => {
 
   test("optionally allow undefined values to pass sanitizer", () => {
     const sanitizer = new Sanitizer();
+    // tslint:disable-next-line:no-string-literal
+    const _iterateOverObject = sanitizer["_iterateOverObject"];
 
     expect(sanitizer.sanitize(undefined)).toBe(null);
+    expect(sanitizer.sanitize({ a: true, b: undefined })).toEqual({
+      a: true,
+      b: null
+    });
+    // @ts-ignore - will fail types check
+    expect(_iterateOverObject(undefined, {})).toBe(null);
+
     expect(sanitizer.sanitize(undefined, { allowUndefined: true })).toBe(
+      undefined
+    );
+    expect(
+      sanitizer.sanitize({ a: true, b: undefined }, { allowUndefined: true })
+    ).toEqual({ a: true, b: undefined });
+    // @ts-ignore - will fail types check
+    expect(_iterateOverObject(undefined, { allowUndefined: true })).toBe(
       undefined
     );
   });
