@@ -181,7 +181,12 @@ export class Sanitizer {
    * @returns {any} The sanitized value.
    * @memberof Sanitizer
    */
-  public sanitize(value: any): any {
+  public sanitize(
+    value: any,
+    options: {
+      allowUndefined?: boolean;
+    } = {}
+  ): any {
     switch (typeof value) {
       case "number":
         if (isNaN(value) || !isFinite(value)) {
@@ -195,6 +200,9 @@ export class Sanitizer {
       case "object":
         return this._iterateOverObject(value);
       default:
+        if (options.allowUndefined && typeof value === "undefined") {
+          return;
+        }
         return null;
     }
   }

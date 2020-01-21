@@ -1,10 +1,10 @@
-import { Sanitizer } from './index';
+import { Sanitizer } from "./index";
 
 // This file contains basic tests that validate the the utility methods.
 // For XSS attack sanitizer testing see xss.test.ts
 
-describe('Sanitizer', () => {
-  test('creates the Sanitizer object and extends options appropriately', () => {
+describe("Sanitizer", () => {
+  test("creates the Sanitizer object and extends options appropriately", () => {
     // Test with no arguments
     const sanitizer1 = new Sanitizer();
     const defaultSanitizer1 = new Sanitizer();
@@ -41,7 +41,7 @@ describe('Sanitizer', () => {
     expect(sanitizer4.xssFilterOptions).toEqual({ whiteList: { a: [] } });
   });
 
-  test('sanitizes a value', () => {
+  test("sanitizes a value", () => {
     const sanitizer = new Sanitizer();
 
     // Numbers
@@ -55,7 +55,7 @@ describe('Sanitizer', () => {
     expect(sanitizer.sanitize(false)).toBe(false);
 
     // Strings
-    const basicString = 'Hello World';
+    const basicString = "Hello World";
     const validHtml = 'Hello <a href="https://example.org">Link</a>';
     const invalidHtml =
       'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />';
@@ -134,18 +134,27 @@ describe('Sanitizer', () => {
     // Others
     // @ts-ignore
     expect(sanitizer.sanitize(arguments)).toBe(null);
-    expect(sanitizer.sanitize(() => 'test')).toBe(null);
-    expect(sanitizer.sanitize(new Error('test'))).toBe(null);
+    expect(sanitizer.sanitize(() => "test")).toBe(null);
+    expect(sanitizer.sanitize(new Error("test"))).toBe(null);
   });
 
-  test('deeply sanitizes an object', () => {
+  test("optionally allow undefined values to pass sanitizer", () => {
+    const sanitizer = new Sanitizer();
+
+    expect(sanitizer.sanitize(undefined)).toBe(null);
+    expect(sanitizer.sanitize(undefined, { allowUndefined: true })).toBe(
+      undefined
+    );
+  });
+
+  test("deeply sanitizes an object", () => {
     const sanitizer = new Sanitizer();
 
     // If object is clean, it return the exact same object;
     const cleanObj1 = {
       a: null,
       b: true,
-      c: 'clean string'
+      c: "clean string"
     };
     const result1 = sanitizer.sanitize(cleanObj1);
     expect(result1).toBe(cleanObj1);
@@ -154,34 +163,34 @@ describe('Sanitizer', () => {
     const result2 = sanitizer.sanitize({
       a: 1,
       b: true,
-      c: 'clean string',
+      c: "clean string",
       d: 'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />',
       e: [
         1,
         true,
         'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />',
-        ['inner', 'array']
+        ["inner", "array"]
       ],
       f: new Date()
     });
     const expected2 = {
       a: 1,
       b: true,
-      c: 'clean string',
+      c: "clean string",
       d: 'Evil <img src="https://exmaple.org/myImg.jpg" />',
       e: [
         1,
         true,
         'Evil <img src="https://exmaple.org/myImg.jpg" />',
-        ['inner', 'array']
+        ["inner", "array"]
       ],
       f: null
     };
     expect(result2).toEqual(expected2);
   });
 
-  test('checks if string is valid html', () => {
-    const basicString = 'Hello World';
+  test("checks if string is valid html", () => {
+    const basicString = "Hello World";
     const validHtml = 'Hello <a href="https://example.org">Link</a>';
     const invalidHtml =
       'Evil <img src="https://exmaple.org/myImg.jpg" onerror="alert(1)" />';
@@ -193,9 +202,9 @@ describe('Sanitizer', () => {
     expect(sanitizer.validate(invalidHtml).isValid).toBe(false);
   });
 
-  test('extends an object of array by concatenating arrays', () => {
+  test("extends an object of array by concatenating arrays", () => {
     // tslint:disable-next-line:no-string-literal
-    const _extendObjectOfArrays = new Sanitizer()['_extendObjectOfArrays'];
+    const _extendObjectOfArrays = new Sanitizer()["_extendObjectOfArrays"];
 
     const result = _extendObjectOfArrays([
       { a: [1, 2] },
@@ -206,44 +215,44 @@ describe('Sanitizer', () => {
     expect(result).toEqual({ a: [1, 2, 3, 4], b: [1, 2, 3, 4] });
   });
 
-  test('returns null of iteration fails', () => {
+  test("returns null of iteration fails", () => {
     // tslint:disable-next-line:no-string-literal
-    const _iterateOverObject = new Sanitizer()['_iterateOverObject'];
+    const _iterateOverObject = new Sanitizer()["_iterateOverObject"];
 
     // Will fail because "this" is not defined
     expect(_iterateOverObject({ a: 1 })).toBe(null);
   });
 
-  test('checks for allowed protocols', () => {
+  test("checks for allowed protocols", () => {
     const sanitizer = new Sanitizer();
 
     // Ensure the allowed protocols are not stripped out
     const allowedProtocols: string[] = [
-      'http',
-      'https',
-      'mailto',
-      'iform',
-      'tel',
-      'flow',
-      'lfmobile',
-      'arcgis-navigator',
-      'arcgis-appstudio-player',
-      'arcgis-survey123',
-      'arcgis-collector',
-      'arcgis-workforce',
-      'arcgis-explorer',
-      'arcgis-trek2there',
-      'mspbi',
-      'comgooglemaps',
-      'pdfefile',
-      'pdfehttp',
-      'pdfehttps',
-      'boxapp',
-      'boxemm',
-      'awb',
-      'awbs',
-      'gropen',
-      'radarscope'
+      "http",
+      "https",
+      "mailto",
+      "iform",
+      "tel",
+      "flow",
+      "lfmobile",
+      "arcgis-navigator",
+      "arcgis-appstudio-player",
+      "arcgis-survey123",
+      "arcgis-collector",
+      "arcgis-workforce",
+      "arcgis-explorer",
+      "arcgis-trek2there",
+      "mspbi",
+      "comgooglemaps",
+      "pdfefile",
+      "pdfehttp",
+      "pdfehttps",
+      "boxapp",
+      "boxemm",
+      "awb",
+      "awbs",
+      "gropen",
+      "radarscope"
     ];
     allowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
@@ -258,18 +267,22 @@ describe('Sanitizer', () => {
       expect(sanitizer.sanitize(source)).toBe(source);
     });
     // Ensure disallowed protocols are still disallowed and are sanitized
-    const disallowedProtocols: string[] = ['ftp', 'smb'];
+    const disallowedProtocols: string[] = ["ftp", "smb"];
     disallowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
       const image = `<img src="${protocol}://someurl.tld/path/to/image.svg">`;
       const audio = `<audio controls><source src="${protocol}://someurl.tld/path/to/audio/file.mp3"></audio>`;
       const video = `<video controls><source src="${protocol}://someurl.tld/path/to/video/file.mpeg"></video>`;
       const source = `<source src=${protocol}://someurl.tld/path/to/audio/file.mp3">`;
-      expect(sanitizer.sanitize(anchor)).toBe('<a href>Link</a>');
-      expect(sanitizer.sanitize(image)).toBe('<img src>');
-      expect(sanitizer.sanitize(audio)).toBe('<audio controls><source src></audio>');
-      expect(sanitizer.sanitize(video)).toBe('<video controls><source src></video>');
-      expect(sanitizer.sanitize(source)).toBe('<source src>');
+      expect(sanitizer.sanitize(anchor)).toBe("<a href>Link</a>");
+      expect(sanitizer.sanitize(image)).toBe("<img src>");
+      expect(sanitizer.sanitize(audio)).toBe(
+        "<audio controls><source src></audio>"
+      );
+      expect(sanitizer.sanitize(video)).toBe(
+        "<video controls><source src></video>"
+      );
+      expect(sanitizer.sanitize(source)).toBe("<source src>");
     });
 
     // Check for protocols that don't include //, such as tel or mailto
@@ -286,50 +299,52 @@ describe('Sanitizer', () => {
     const hash = "#";
     const hashId = "#test";
 
-    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach((uri: string) => {
-      const anchor = `<a href="${uri}">Link</a>`;
-      const image = `<img src="${uri}">`;
-      const audio = `<audio><source src="${uri}"></audio>`;
-      const video = `<video><source src="${uri}"></audio>`;
-      const source = `<source src="${uri}">`;
-      expect(sanitizer.sanitize(anchor)).toBe(anchor);
-      expect(sanitizer.sanitize(image)).toBe(image);
-      expect(sanitizer.sanitize(audio)).toBe(audio);
-      expect(sanitizer.sanitize(video)).toBe(video);
-      expect(sanitizer.sanitize(source)).toBe(source);
-    });
+    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach(
+      (uri: string) => {
+        const anchor = `<a href="${uri}">Link</a>`;
+        const image = `<img src="${uri}">`;
+        const audio = `<audio><source src="${uri}"></audio>`;
+        const video = `<video><source src="${uri}"></audio>`;
+        const source = `<source src="${uri}">`;
+        expect(sanitizer.sanitize(anchor)).toBe(anchor);
+        expect(sanitizer.sanitize(image)).toBe(image);
+        expect(sanitizer.sanitize(audio)).toBe(audio);
+        expect(sanitizer.sanitize(video)).toBe(video);
+        expect(sanitizer.sanitize(source)).toBe(source);
+      }
+    );
   });
 
-  test('sanitizes URLs', () => {
+  test("sanitizes URLs", () => {
     const sanitizer = new Sanitizer();
 
     // Ensure allowed protocols are passed through untouched
     const allowedProtocols: string[] = [
-      'http',
-      'https',
-      'mailto',
-      'iform',
-      'tel',
-      'flow',
-      'lfmobile',
-      'arcgis-navigator',
-      'arcgis-appstudio-player',
-      'arcgis-survey123',
-      'arcgis-collector',
-      'arcgis-workforce',
-      'arcgis-explorer',
-      'arcgis-trek2there',
-      'mspbi',
-      'comgooglemaps',
-      'pdfefile',
-      'pdfehttp',
-      'pdfehttps',
-      'boxapp',
-      'boxemm',
-      'awb',
-      'awbs',
-      'gropen',
-      'radarscope'
+      "http",
+      "https",
+      "mailto",
+      "iform",
+      "tel",
+      "flow",
+      "lfmobile",
+      "arcgis-navigator",
+      "arcgis-appstudio-player",
+      "arcgis-survey123",
+      "arcgis-collector",
+      "arcgis-workforce",
+      "arcgis-explorer",
+      "arcgis-trek2there",
+      "mspbi",
+      "comgooglemaps",
+      "pdfefile",
+      "pdfehttp",
+      "pdfehttps",
+      "boxapp",
+      "boxemm",
+      "awb",
+      "awbs",
+      "gropen",
+      "radarscope"
     ];
     allowedProtocols.forEach((protocol: string) => {
       const url = `${protocol}://someurl.tld?param1=1&param2=2`;
@@ -337,10 +352,10 @@ describe('Sanitizer', () => {
     });
 
     // Ensure disallowed protocols are still disallowed and are sanitized
-    const disallowedProtocols: string[] = ['ftp', 'smb'];
+    const disallowedProtocols: string[] = ["ftp", "smb"];
     disallowedProtocols.forEach((protocol: string) => {
       const url = `${protocol}://someurl.tld?param1=1&param2=2`;
-      expect(sanitizer.sanitizeUrl(url)).toBe('');
+      expect(sanitizer.sanitizeUrl(url)).toBe("");
     });
 
     // Check for protocols that don't include //, such as tel or mailto
@@ -357,24 +372,26 @@ describe('Sanitizer', () => {
     const hash = "#";
     const hashId = "#test";
 
-    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach((url: string) => {
-      expect(sanitizer.sanitizeUrl(url)).toBe(url);
-    });
+    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach(
+      (url: string) => {
+        expect(sanitizer.sanitizeUrl(url)).toBe(url);
+      }
+    );
   });
 
-  test('check for some of the allowed tags and attributes', () => {
-    const u = '<u>String</u>';
-    const hr = '<hr>';
-    const ol = '<ol><li>List Item 1</li><li>List Item 2</li></ol>';
+  test("check for some of the allowed tags and attributes", () => {
+    const u = "<u>String</u>";
+    const hr = "<hr>";
+    const ol = "<ol><li>List Item 1</li><li>List Item 2</li></ol>";
     const safeDiv = '<div style="display:none;">Text content</div>';
     const unsafeDiv = '<div onerror="alert(1)">Text content</div>';
-    const strippedDiv = '<div>Text content</div>';
+    const strippedDiv = "<div>Text content</div>";
     const audio = `<audio controls><source src="http://someurl.tld/path/to/audio/file.mp3" type="audio/mpeg"></audio>`;
     const video = `<video controls><source src="http://someurl.tld/path/to/video/file.mpeg" type="video/mpeg"></video>`;
     const stripAudioSrc = `<audio controls src="http://someurl.tld/path/to/audio/file.mp3">`;
     const stripVideoSrc = `<video controls src="http://someurl.tld/path/to/video/file.mpeg">`;
-    const strippedAudioSrc = '<audio controls>';
-    const strippedVideoSrc = '<video controls>';
+    const strippedAudioSrc = "<audio controls>";
+    const strippedVideoSrc = "<video controls>";
 
     const sanitizer = new Sanitizer();
 
@@ -389,12 +406,12 @@ describe('Sanitizer', () => {
     expect(sanitizer.sanitize(stripVideoSrc)).toBe(strippedVideoSrc);
   });
 
-  test('trims a string', () => {
+  test("trims a string", () => {
     // tslint:disable-next-line:no-string-literal
-    const _trim = new Sanitizer()['_trim'];
+    const _trim = new Sanitizer()["_trim"];
 
-    const str = ' \tString\n\r \t';
-    const trimmedString = 'String';
+    const str = " \tString\n\r \t";
+    const trimmedString = "String";
 
     // Save String.prototype.trim
     const trimPrototype = String.prototype.trim;
