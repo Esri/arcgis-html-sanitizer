@@ -29,7 +29,7 @@ export interface IWhiteList extends XSS.IWhiteList {
   source?: string[];
 }
 
-/** Options to apply to sanitize metion */
+/** Options to apply to sanitize method */
 export interface ISanitizeOptions {
   /* Don't convert undefined to null */
   allowUndefined?: boolean;

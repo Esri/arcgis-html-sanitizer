@@ -1,6 +1,6 @@
 import { Sanitizer } from "./index";
 
-// This file contains basic tests that validate the the utility methods.
+// This file contains basic tests that validate the utility methods.
 // For XSS attack sanitizer testing see xss.test.ts
 
 describe("Sanitizer", () => {
