@@ -31,9 +31,7 @@ const createBaseConfig = (format) => ({
     }),
     resolve(),
     commonjs(),
-    typescript({
-      target: format === "esm" ? "es6" : "es5"
-    })
+    typescript()
   ]
 });
 
