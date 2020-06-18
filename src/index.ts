@@ -260,7 +260,7 @@ export class Sanitizer {
    * @returns {{}} The extended object.
    * @memberof Sanitizer
    */
-  private _extendObjectOfArrays(objects: Array<{}>): {} {
+  private _extendObjectOfArrays(objects: {}[]): {} {
     const finalObj = {};
 
     objects.forEach(obj => {
@@ -336,6 +336,8 @@ export class Sanitizer {
    * @returns {string} The trimmed string.
    */
   private _trim(val: string): string {
+    // @ts-ignore This is used by Jest,
+    // but TypeScript errors since it assumes `trim` is always available.
     return String.prototype.trim
       ? val.trim()
       : val.replace(/(^\s*)|(\s*$)/g, "");
