@@ -13,7 +13,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "rimraf dist && rollup -c && yarn run build:dts",
-    "build:dts": "tsc --outDir ./dist/esm --declaration --emitDeclarationOnly && tsc --outDir ./dist/node --declaration --emitDeclarationOnly",
+    "build:dts": "tsc -p tsconfig-decl.json --outDir dist/esm && tsc -p tsconfig-decl.json --outDir dist/node",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "tslint --project tsconfig.json --fix",
     "test": "jest --coverage",
