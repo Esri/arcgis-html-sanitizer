@@ -1,9 +1,14 @@
 {
   "name": "@esri/arcgis-html-sanitizer",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
   "module": "dist/esm/index.mjs",
+  "files": [
+    "dist/**",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md"
+  ],
   "repository": "https://github.com/Esri/arcgis-html-sanitizer.git",
   "bugs": {
     "url": "https://github.com/Esri/arcgis-html-sanitizer/issues"
