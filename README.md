@@ -261,7 +261,7 @@ yarn run test --watch
 Build compiled output:
 
 - CommonJS Module outputs to `dist/node/index.js`.
-- ES Module outputs to `dist/esm/index.mjs` and `dist/esm/index.min.mjs`.
+- ES Module outputs to `dist/esm/index.js` and `dist/esm/index.min.js`.
 - UMD Module outputs to `dist/umd/arcgis-html-sanitizer.js` and `dist/umd/arcgis-html-sanitizer.min.js`.
 
 ```sh
