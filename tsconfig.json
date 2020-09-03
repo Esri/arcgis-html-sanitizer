@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["es6"],
-    "target": "es5",
     "module": "es6",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "strict": true,
-    "alwaysStrict": true,
     "noImplicitAny": true,
-    "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "strict": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "esModuleInterop": true,
-    "types": ["xss", "lodash.isplainobject", "jest"]
+    "target": "es5",
+    "types": ["lodash.isplainobject", "jest"]
   },
   "exclude": ["./src/**/*.test.ts"],
   "include": ["./src/**/*.ts"]
