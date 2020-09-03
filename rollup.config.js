@@ -27,8 +27,13 @@ const createBaseConfig = (format) => ({
     replace({
       // prevent the creation of filterCSS and filterXSS globals
       "typeof window": "typeof undefined",
-      include: ["node_modules/cssfilter/**", "node_modules/xss/**"]
+      "include": ["node_modules/cssfilter/**", "node_modules/xss/**"]
     }),
+    format === "esm" && {
+      generateBundle() {
+        this.emitFile({ type: "asset", fileName: "package.json", source: `{ "type": "module" }` });
+      }
+    },
     resolve(),
     commonjs(),
     typescript()
@@ -39,13 +44,13 @@ export default [
   {
     ...createBaseConfig("cjs"),
     external: Object.keys(pkg.dependencies),
-    output: [{ banner, format: "cjs", file: pkg.main, sourcemap: true }]
+    output: [{ banner, format: "cjs", file: pkg.main, exports: "named", sourcemap: true }]
   },
   {
     ...createBaseConfig("esm"),
     output: [
       { banner, format: "esm", file: pkg.module, sourcemap: true },
-      { banner, format: "esm", file: pkg.module.replace(".mjs", ".min.mjs"), sourcemap: true, plugins: [terser()] }
+      { banner, format: "esm", file: pkg.module.replace(".js", ".min.js"), sourcemap: true, plugins: [terser()] }
     ]
   },
   {

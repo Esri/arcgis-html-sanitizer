@@ -12,7 +12,7 @@
  * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
 import isPlainObject from "lodash.isplainobject";
-import xss from "xss";
+import * as xss from "xss";
 
 /**
  * The response from the validate method
@@ -343,3 +343,5 @@ export class Sanitizer {
       : val.replace(/(^\s*)|(\s*$)/g, "");
   }
 }
+
+export default Sanitizer;
