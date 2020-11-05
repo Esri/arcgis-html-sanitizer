@@ -231,6 +231,21 @@ export class Sanitizer {
   }
 
   /**
+   * Sanitizes an HTML attribute value.
+   *
+   * @param {string} tag The tagname of the HTML element.
+   * @param {string} attribute The attribute name of the HTML element.
+   * @param {string} value The raw value to be used for the HTML attribute value.
+   * @param {XSS.ICSSFilter} [cssFilter] The CSS filter to be used.
+   * @returns {string} The sanitized attribute value.
+   * @memberof Sanitizer
+   */
+  public sanitizeHTMLAttribute(tag: string, attribute: string, value: string, cssFilter?: XSS.ICSSFilter): string {
+    // @ts-ignore safeAttrValue does handle undefined cssFilter
+    return xss.safeAttrValue(tag, attribute, value, cssFilter);
+  }
+
+  /**
    * Checks if a value only contains valid HTML.
    *
    * @param {any} value The value to validate.

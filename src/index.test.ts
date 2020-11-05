@@ -394,6 +394,32 @@ describe("Sanitizer", () => {
       }
     );
   });
+  
+  test('sanitizes HTML attributes', () => {
+    const sanitizer = new Sanitizer();
+    // A pair of double quotes are encoded
+    expect(sanitizer.sanitizeHTMLAttribute('button', 'aria-label', '"Text content"')).toBe('&quot;Text content&quot;');
+    // Double quote is encoded
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"')).toBe('&quot;');
+    // Escaped double quotes are encoded
+    expect(sanitizer.sanitizeHTMLAttribute('button', 'aria-label', '\"Text content\"')).toBe('&quot;Text content&quot;');
+    // src with javascript URL should be removed
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');    
+    // href with javascript URL should be removed
+    expect(sanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');    
+    // background with javascript URL should be removed
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'background', 'javascript:alert("xss")')).toBe('');
+    // style with javascript URL should be removed
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")")')).toBe('');                
+    // safe styles should be allowed
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;font-size:12px;')).toBe('color:red; font-size:12px;');
+    // custom filter removes style value
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');                
+    // custom filter still disallows javascript URLs
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');        
+    // attempt to prematurely close the HTML element and inject script tag should be thwarted by encoding
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"><script>alert("Text content")</script>')).toBe('&quot;&gt;&lt;script&gt;alert(&quot;Text content&quot;)&lt;/script&gt;')    
+  });
 
   test("check for some of the allowed tags and attributes", () => {
     const u = "<u>String</u>";
