@@ -419,6 +419,31 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');        
     // attempt to prematurely close the HTML element and inject script tag should be thwarted by encoding
     expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"><script>alert("Text content")</script>')).toBe('&quot;&gt;&lt;script&gt;alert(&quot;Text content&quot;)&lt;/script&gt;')    
+    
+    const customSanitizer = new Sanitizer({
+      safeAttrValue: (tag, name, value, cssFilter) => {        
+        if (tag === 'div' && name === 'data-something') {
+          return '';
+        }
+
+        // this is only shown for testing; in practice a custom safeAttrValue needs to escape input 
+        // (by calling `xss.safeAttrValue()` here) instead of returning it blindly
+        return value;
+      }      
+    });    
+    // Removes attributes disallowed by custom safeAttrValue  
+    expect(customSanitizer.sanitizeHTMLAttribute('div', 'data-something', 'Content')).toBe('');
+    // Preserves attributes allowed by custom safeAttrValue  
+    expect(customSanitizer.sanitizeHTMLAttribute('img', 'alt', 'A picture')).toBe('A picture');
+    
+    // no custom safeAttrValue
+    const anotherCustomSanitizer = new Sanitizer({});    
+    // basic quote escaping
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('button', 'aria-label', '"Text content"')).toBe('&quot;Text content&quot;');
+    // src with javascript URL should be removed
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');    
+    // href with javascript URL should be removed
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');        
   });
 
   test("check for some of the allowed tags and attributes", () => {
