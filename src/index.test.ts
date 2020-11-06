@@ -443,7 +443,11 @@ describe("Sanitizer", () => {
     // src with javascript URL should be removed
     expect(anotherCustomSanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');    
     // href with javascript URL should be removed
-    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');        
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe(''); 
+    // custom filter removes style value
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');                
+    // custom filter still disallows javascript URLs
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');               
   });
 
   test("check for some of the allowed tags and attributes", () => {
