@@ -213,11 +213,11 @@ const styles = sanitizer.sanitizeHTMLAttribute(
 // styles => ""
 ```
 
-Optionally, a custom filter for style attributes can be provided as the final argument. Providing this filter opts out of the default JSXSS style attribute filter, so you are then responsible for sanitizing style attribute values manually (some protection against `url()` values is still provided).
+Optionally, a custom filter for style attributes can be provided as the final argument, which will be used in place of the default js-xss style attribute filter.
 ```js
 
 const styles = sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { 
-  process: (value: string) => value.indexOf('color') !== -1 ? '' : /* additional filtering/sanitizing here */ 
+  process: (value: string) => value.indexOf('color') !== -1 ? '' : value /* or additional filtering here */ 
 });
 
 // styles => ""
@@ -227,7 +227,7 @@ const styles = sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', {
 
 #### Customizing Filter Options
 
-Override the default XSS filter options by passing a valid js-css options object as the first parameter of the constructor. Options available here: https://github.com/leizongmin/js-xss#custom-filter-rules.
+Override the default XSS filter options by passing a valid js-xss options object as the first parameter of the constructor. Options available here: https://github.com/leizongmin/js-xss#custom-filter-rules.
 
 You can also extend the default options instead of overriding them by passing `true` as the second parameter of the constructor. When extending
 the filter options `whiteList`, the attribute arrays will automatically
