@@ -488,6 +488,7 @@ describe("Sanitizer", () => {
     const trimPrototype = String.prototype.trim;
 
     // Remove String.prototype.trim for regex path tests
+    // @ts-ignore
     delete String.prototype.trim;
 
     // Using regex
