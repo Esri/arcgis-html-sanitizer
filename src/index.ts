@@ -144,7 +144,7 @@ export class Sanitizer {
     }
   };
   public readonly xssFilterOptions: XSS.IFilterXSSOptions;
-  private _xssFilter: XSS.ICSSFilter;
+  private _xssFilter: xss.FilterXSS;  
 
   constructor(filterOptions?: XSS.IFilterXSSOptions, extendDefaults?: boolean) {
     let xssFilterOptions: XSS.IFilterXSSOptions;
@@ -228,6 +228,28 @@ export class Sanitizer {
     } else {
       return xss.escapeAttrValue(value);
     }
+  }
+
+  /**
+   * Sanitizes an HTML attribute value.
+   *
+   * @param {string} tag The tagname of the HTML element.
+   * @param {string} attribute The attribute name of the HTML element.
+   * @param {string} value The raw value to be used for the HTML attribute value.
+   * @param {XSS.ICSSFilter} [cssFilter] The CSS filter to be used.
+   * @returns {string} The sanitized attribute value.
+   * @memberof Sanitizer
+   */
+  public sanitizeHTMLAttribute(tag: string, attribute: string, value: string, cssFilter?: XSS.ICSSFilter): string {    
+    // use the custom safeAttrValue function if provided
+    if (typeof this.xssFilterOptions.safeAttrValue === 'function') {      
+      // @ts-ignore safeAttrValue does handle undefined cssFilter
+      return this.xssFilterOptions.safeAttrValue(tag, attribute, value, cssFilter);
+    }
+
+    // otherwise use the default
+    // @ts-ignore safeAttrValue does handle undefined cssFilter
+    return xss.safeAttrValue(tag, attribute, value, cssFilter);
   }
 
   /**

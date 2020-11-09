@@ -181,9 +181,53 @@ const unsupportedProtocol = sanitizer.sanitizeUrl(
 // unsupportedProtocol => ""
 ```
 
+#### Sanitize HTML Attribute Values
+
+To prevent against XSS, untrusted data going into HTML attribute values need to be 
+[sanitized](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#rule-2-attribute-encode-before-inserting-untrusted-data-into-html-common-attributes), 
+including [`style` attribute values](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#rule-4-css-encode-and-strictly-validate-before-inserting-untrusted-data-into-html-style-property-values).
+The ability to sanitize HTML attribute values has been specifically broken out to a public
+method, `sanitizeHTMLAttribute`, specifying the tagname, attribute name, and value.
+
+```js
+// Instantiate a new Sanitizer object
+const sanitizer = new Sanitizer();
+
+// Sanitize a safe alt attribute value
+const unquotedAttribute = sanitizer.sanitizeHTMLAttribute('img', 'alt', 'A picture');
+
+// unquotedAttribute => "A picture"
+
+// Sanitize an unsafe alt attribute value
+const quotedAttribute = sanitizer.sanitizeHTMLAttribute('img', 'alt', '"A picture"');
+
+// quotedAttribute => "&quot;A picture&quot;"
+
+// Sanitize unsafe style attribute value
+const styles = sanitizer.sanitizeHTMLAttribute(
+  'div', 
+  'style', 
+  'background-image:url("javascript:alert(\"xss\")")'
+);  
+
+// styles => ""
+```
+
+Optionally, a custom filter for style attributes can be provided as the final argument, which will be used in place of the default js-xss style attribute filter.
+```js
+
+const styles = sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { 
+  process: (value: string) => value.indexOf('color') !== -1 ? '' : value /* or additional filtering here */ 
+});
+
+// styles => ""
+
+```
+
+
 #### Customizing Filter Options
 
-Override the default XSS filter options by passing a valid js-css options object as the first parameter of the constructor. Options available here: https://github.com/leizongmin/js-xss#custom-filter-rules.
+Override the default XSS filter options by passing a valid js-xss options object as the first parameter of the constructor. Options available here: https://github.com/leizongmin/js-xss#custom-filter-rules.
 
 You can also extend the default options instead of overriding them by passing `true` as the second parameter of the constructor. When extending
 the filter options `whiteList`, the attribute arrays will automatically
