@@ -453,6 +453,7 @@ describe("Sanitizer", () => {
   test("check for some of the allowed tags and attributes", () => {
     const u = "<u>String</u>";
     const hr = "<hr>";
+    const abbr = `<abbr title="Cascading Style Sheets">CSS</abbr>`;
     const ol = "<ol><li>List Item 1</li><li>List Item 2</li></ol>";
     const safeDiv = '<div style="display:none;">Text content</div>';
     const unsafeDiv = '<div onerror="alert(1)">Text content</div>';
@@ -468,6 +469,7 @@ describe("Sanitizer", () => {
 
     expect(sanitizer.sanitize(u)).toBe(u);
     expect(sanitizer.sanitize(hr)).toBe(hr);
+    expect(sanitizer.sanitize(abbr)).toBe(abbr);
     expect(sanitizer.sanitize(ol)).toBe(ol);
     expect(sanitizer.sanitize(safeDiv)).toBe(safeDiv);
     expect(sanitizer.sanitize(unsafeDiv)).toBe(strippedDiv);

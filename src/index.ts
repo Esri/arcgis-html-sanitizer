@@ -45,6 +45,7 @@ export class Sanitizer {
   // Supported HTML Spec: https://doc.arcgis.com/en/arcgis-online/reference/supported-html.htm
   public readonly arcgisWhiteList: IWhiteList = {
     a: ["href", "target", "style"],
+    abbr: ["title"],
     img: ["src", "width", "height", "border", "alt", "style"],
     video: [
       "autoplay",
