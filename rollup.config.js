@@ -27,7 +27,8 @@ const createBaseConfig = (format) => ({
     replace({
       // prevent the creation of filterCSS and filterXSS globals
       "typeof window": "typeof undefined",
-      "include": ["node_modules/cssfilter/**", "node_modules/xss/**"]
+      "include": ["node_modules/cssfilter/**", "node_modules/xss/**"],
+      "preventAssignment": true
     }),
     format === "esm" && {
       generateBundle() {
@@ -44,13 +45,13 @@ export default [
   {
     ...createBaseConfig("cjs"),
     external: Object.keys(pkg.dependencies),
-    output: [{ banner, format: "cjs", file: pkg.main, exports: "named", sourcemap: true }]
+    output: [{ banner, format: "cjs", file: pkg.main, exports: "named" }]
   },
   {
     ...createBaseConfig("esm"),
     output: [
-      { banner, format: "esm", file: pkg.module, sourcemap: true },
-      { banner, format: "esm", file: pkg.module.replace(".js", ".min.js"), sourcemap: true, plugins: [terser()] }
+      { banner, format: "esm", file: pkg.module },
+      { banner, format: "esm", file: pkg.module.replace(".js", ".min.js"), plugins: [terser()] }
     ]
   },
   {
@@ -60,14 +61,12 @@ export default [
         banner,
         format: "umd",
         file: `dist/umd/${pkg.name.replace("@esri/", "")}.js`,
-        sourcemap: true,
         name: "Sanitizer"
       },
       {
         banner,
         format: "umd",
         file: `dist/umd/${pkg.name.replace("@esri/", "")}.min.js`,
-        sourcemap: true,
         name: "Sanitizer",
         plugins: [terser()]
       }
