@@ -3,6 +3,11 @@ import { Sanitizer } from "./index";
 // This file contains basic tests that validate the utility methods.
 // For XSS attack sanitizer testing see xss.test.ts
 
+// Sanitizes to {} or null (Node 16+ has some changes to Base data values)
+const isNullOrEmptyObj = (result: any) => {
+  return result === null || (result && typeof result === 'object' && Object.keys(result).length === 0)
+}
+
 describe("Sanitizer", () => {
   test("creates the Sanitizer object and extends options appropriately", () => {
     // Test with no arguments
@@ -122,11 +127,11 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(Promise)).toBe(null);
 
     // Reflection
-    expect(sanitizer.sanitize(Reflect)).toEqual({});
+    expect(isNullOrEmptyObj(sanitizer.sanitize(Reflect))).toEqual(true);
     expect(sanitizer.sanitize(Proxy)).toBe(null);
 
     // Internationalization
-    expect(sanitizer.sanitize(Intl)).toEqual({});
+    expect(isNullOrEmptyObj(sanitizer.sanitize(Intl))).toEqual(true);
     expect(sanitizer.sanitize(Intl.Collator)).toBe(null);
     expect(sanitizer.sanitize(Intl.DateTimeFormat)).toBe(null);
     expect(sanitizer.sanitize(Intl.NumberFormat)).toBe(null);
