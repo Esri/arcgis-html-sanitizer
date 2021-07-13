@@ -62,7 +62,7 @@ export class Sanitizer {
     span: ["style"],
     table: ["width", "height", "cellpadding", "cellspacing", "border", "style"],
     div: ["style", "align"],
-    font: ["size", "color", "style"],
+    font: ["size", "color", "style", "face"],
     tr: ["height", "valign", "align", "style"],
     td: [
       "height",

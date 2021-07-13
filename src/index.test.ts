@@ -469,6 +469,7 @@ describe("Sanitizer", () => {
     const stripVideoSrc = `<video controls src="http://someurl.tld/path/to/video/file.mpeg">`;
     const strippedAudioSrc = "<audio controls>";
     const strippedVideoSrc = "<video controls>";
+    const fontFace = `<font face="Arial">Text content</font>`;
 
     const sanitizer = new Sanitizer();
 
@@ -482,6 +483,7 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(stripAudioSrc)).toBe(strippedAudioSrc);
     expect(sanitizer.sanitize(video)).toBe(video);
     expect(sanitizer.sanitize(stripVideoSrc)).toBe(strippedVideoSrc);
+    expect(sanitizer.sanitize(fontFace)).toBe(fontFace);
   });
 
   test("trims a string", () => {
