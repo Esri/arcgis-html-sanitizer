@@ -125,6 +125,7 @@ export class Sanitizer {
     "arcgis-workforce",
     "arcgis-explorer",
     "arcgis-trek2there",
+    "arcgis-quickcapture",
     "mspbi",
     "comgooglemaps",
     "pdfefile",

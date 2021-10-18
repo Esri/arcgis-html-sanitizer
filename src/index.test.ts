@@ -9,6 +9,35 @@ const isNullOrEmptyObj = (result: any) => {
 }
 
 describe("Sanitizer", () => {
+  const allowedProtocols: string[] = [
+    "http",
+    "https",
+    "mailto",
+    "iform",
+    "tel",
+    "flow",
+    "lfmobile",
+    "arcgis-navigator",
+    "arcgis-appstudio-player",
+    "arcgis-survey123",
+    "arcgis-collector",
+    "arcgis-workforce",
+    "arcgis-explorer",
+    "arcgis-trek2there",
+    "arcgis-quickcapture",
+    "mspbi",
+    "comgooglemaps",
+    "pdfefile",
+    "pdfehttp",
+    "pdfehttps",
+    "boxapp",
+    "boxemm",
+    "awb",
+    "awbs",
+    "gropen",
+    "radarscope"
+  ];
+
   test("creates the Sanitizer object and extends options appropriately", () => {
     // Test with no arguments
     const sanitizer1 = new Sanitizer();
@@ -248,33 +277,6 @@ describe("Sanitizer", () => {
     const sanitizer = new Sanitizer();
 
     // Ensure the allowed protocols are not stripped out
-    const allowedProtocols: string[] = [
-      "http",
-      "https",
-      "mailto",
-      "iform",
-      "tel",
-      "flow",
-      "lfmobile",
-      "arcgis-navigator",
-      "arcgis-appstudio-player",
-      "arcgis-survey123",
-      "arcgis-collector",
-      "arcgis-workforce",
-      "arcgis-explorer",
-      "arcgis-trek2there",
-      "mspbi",
-      "comgooglemaps",
-      "pdfefile",
-      "pdfehttp",
-      "pdfehttps",
-      "boxapp",
-      "boxemm",
-      "awb",
-      "awbs",
-      "gropen",
-      "radarscope"
-    ];
     allowedProtocols.forEach((protocol: string) => {
       const anchor = `<a href="${protocol}://someurl.tld?param1=1&param2=2">Link</a>`;
       const image = `<img src="${protocol}://someurl.tld/path/to/image.svg">`;
@@ -340,33 +342,6 @@ describe("Sanitizer", () => {
     const sanitizer = new Sanitizer();
 
     // Ensure allowed protocols are passed through untouched
-    const allowedProtocols: string[] = [
-      "http",
-      "https",
-      "mailto",
-      "iform",
-      "tel",
-      "flow",
-      "lfmobile",
-      "arcgis-navigator",
-      "arcgis-appstudio-player",
-      "arcgis-survey123",
-      "arcgis-collector",
-      "arcgis-workforce",
-      "arcgis-explorer",
-      "arcgis-trek2there",
-      "mspbi",
-      "comgooglemaps",
-      "pdfefile",
-      "pdfehttp",
-      "pdfehttps",
-      "boxapp",
-      "boxemm",
-      "awb",
-      "awbs",
-      "gropen",
-      "radarscope"
-    ];
     allowedProtocols.forEach((protocol: string) => {
       const url = `${protocol}://someurl.tld?param1=1&param2=2`;
       expect(sanitizer.sanitizeUrl(url)).toBe(url);
