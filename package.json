@@ -1,6 +1,6 @@
 {
   "name": "@esri/arcgis-html-sanitizer",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
   "module": "dist/esm/index.js",
