@@ -180,7 +180,7 @@ describe('XSS Sanitizing', () => {
 
   test('Embedded tab', () => {
     const sanitizer = new Sanitizer();
-    const dirty = '<IMG SRC="jav	ascript:alert(\'XSS\');">';
+    const dirty = '<IMG SRC="jav  ascript:alert(\'XSS\');">';
     const clean = '<img src>';
 
     expect(sanitizer.sanitize(dirty)).toEqual(clean);
@@ -739,6 +739,38 @@ describe('XSS Sanitizing', () => {
     const dirty =
       '<A HREF="javascript:document.location=\'http://www.google.com/\'">XSS</A>';
     const clean = '<a href>XSS</a>';
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Legitimate style attribute', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div style="width:100%;"><div>`;
+    const clean = `<div style="width:100%;"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Legitimate aria-label attribute', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div aria-label="my description"><div>`;
+    const clean = `<div aria-label="my description"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Legitimate aria-hidden attribute', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div aria-hidden="true"><div>`;
+    const clean = `<div aria-hidden="true"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Attempted malicious aria-label attribute, but not executable', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div aria-label="javascript:document.location=\'http://www.google.com/\'"><div>`;
+    const clean = `<div aria-label="javascript:document.location=\'http://www.google.com/\'"><div>`;
 
     expect(sanitizer.sanitize(dirty)).toEqual(clean);
   });

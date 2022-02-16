@@ -50,7 +50,7 @@ export class Sanitizer {
     b: [],
     br: [],
     dd: ["style"],
-    div: ["align", "style"],
+    div: ["align", "aria-hidden", "aria-label", "style"],
     dl: ["style"],
     dt: ["style"],
     em: [],
@@ -159,7 +159,7 @@ export class Sanitizer {
     }
   };
   public readonly xssFilterOptions: XSS.IFilterXSSOptions;
-  private _xssFilter: xss.FilterXSS;  
+  private _xssFilter: xss.FilterXSS;
 
   constructor(filterOptions?: XSS.IFilterXSSOptions, extendDefaults?: boolean) {
     let xssFilterOptions: XSS.IFilterXSSOptions;
@@ -255,9 +255,9 @@ export class Sanitizer {
    * @returns {string} The sanitized attribute value.
    * @memberof Sanitizer
    */
-  public sanitizeHTMLAttribute(tag: string, attribute: string, value: string, cssFilter?: XSS.ICSSFilter): string {    
+  public sanitizeHTMLAttribute(tag: string, attribute: string, value: string, cssFilter?: XSS.ICSSFilter): string {
     // use the custom safeAttrValue function if provided
-    if (typeof this.xssFilterOptions.safeAttrValue === 'function') {      
+    if (typeof this.xssFilterOptions.safeAttrValue === 'function') {
       // @ts-ignore safeAttrValue does handle undefined cssFilter
       return this.xssFilterOptions.safeAttrValue(tag, attribute, value, cssFilter);
     }
