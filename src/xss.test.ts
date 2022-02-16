@@ -180,7 +180,7 @@ describe('XSS Sanitizing', () => {
 
   test('Embedded tab', () => {
     const sanitizer = new Sanitizer();
-    const dirty = '<IMG SRC="jav  ascript:alert(\'XSS\');">';
+    const dirty = '<IMG SRC="jav	ascript:alert(\'XSS\');">';
     const clean = '<img src>';
 
     expect(sanitizer.sanitize(dirty)).toEqual(clean);
