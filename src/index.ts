@@ -72,6 +72,7 @@ export class Sanitizer {
     source: ["media", "src", "type"],
     span: ["style"],
     strong: [],
+    style: ["media","title"],
     sub: ["style"],
     sup: ["style"],
     table: ["border", "cellpadding", "cellspacing", "height", "style", "width"],

@@ -444,6 +444,7 @@ describe("Sanitizer", () => {
     const stripVideoSrc = `<video controls src="http://someurl.tld/path/to/video/file.mpeg">`;
     const strippedAudioSrc = "<audio controls>";
     const strippedVideoSrc = "<video controls>";
+    const style = `<style media="all" title="Content styling">p {color:#000000;} </style>`;
     const fontFace = `<font face="Arial">Text content</font>`;
     const figure = `<figure style="background-color:blue;background-image:url("javascript:alert(\"xss\")";" onerror="alert(1)" onclick="javascript:alert(\"xss\")"><figcaption style="background-color:red;background-image:url("javascript:alert(\"xss\")";" onerror="alert(1)" onclick="javascript:alert(\"xss\")">Figure Caption</figcaption></figure>`;
     const elementsWithStyle = ["a", "img", "span", "div", "font", "table", "tr", "th", "td", "p", "dd", "dl", "dt", "h1", "h2", "h3", "h4", "h5", "h6", "sub", "sup"];
@@ -460,6 +461,7 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(stripAudioSrc)).toBe(strippedAudioSrc);
     expect(sanitizer.sanitize(video)).toBe(video);
     expect(sanitizer.sanitize(stripVideoSrc)).toBe(strippedVideoSrc);
+    expect(sanitizer.sanitize(style)).toBe(style);
     expect(sanitizer.sanitize(fontFace)).toBe(fontFace);
     expect(sanitizer.sanitize(figure)).toBe(
       `<figure style="background-color:blue;"><figcaption style="background-color:red;">Figure Caption</figcaption></figure>`
