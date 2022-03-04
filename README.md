@@ -244,7 +244,7 @@ sanitizer.encodeHTML(input);
 ```
 
 #### Encode Attribute Values
-The `encodeAttrValue` method encodes all non-alphanumeric ASCII characters to their hexadecimal HTML entity code to ensure safe use as an HTML attribute.
+The `encodeAttrValue` method encodes all non-alphanumeric ASCII characters to their hexadecimal HTML entity code to ensure safe use as an HTML attribute. This method only encodes characters. It does not directly sanitize the string to remove XSS. If you are looking to sanitize your string, use the `sanitizeHTMLAttribute` method instead.
 
 ```js
 const sanitizer = new Sanitizer();
