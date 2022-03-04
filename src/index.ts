@@ -85,7 +85,7 @@ export class Sanitizer {
       "rowspan",
       "style",
       "valign",
-      "width"
+      "width",
     ],
     th: [
       "align",
@@ -95,7 +95,7 @@ export class Sanitizer {
       "rowspan",
       "style",
       "valign",
-      "width"
+      "width",
     ],
     u: [],
     ul: [],
@@ -107,8 +107,8 @@ export class Sanitizer {
       "muted",
       "poster",
       "preload",
-      "width"
-    ]
+      "width",
+    ],
   };
   public readonly allowedProtocols: string[] = [
     "http",
@@ -136,7 +136,7 @@ export class Sanitizer {
     "awb",
     "awbs",
     "gropen",
-    "radarscope"
+    "radarscope",
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
@@ -156,7 +156,7 @@ export class Sanitizer {
         return this.sanitizeUrl(value);
       }
       return xss.safeAttrValue(tag, name, value, cssFilter);
-    }
+    },
   };
   public readonly xssFilterOptions: XSS.IFilterXSSOptions;
   private _xssFilter: xss.FilterXSS;
@@ -166,7 +166,7 @@ export class Sanitizer {
     ">": "&#x3E;",
     '"': "&#x22;",
     "'": "&#x27;",
-    "/": "&#x2F;"
+    "/": "&#x2F;",
   };
 
   constructor(filterOptions?: XSS.IFilterXSSOptions, extendDefaults?: boolean) {
@@ -178,12 +178,12 @@ export class Sanitizer {
     } else if (filterOptions && extendDefaults) {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
-      Object.keys(filterOptions).forEach(key => {
+      Object.keys(filterOptions).forEach((key) => {
         if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
             this.arcgisWhiteList,
-            filterOptions.whiteList || {}
+            filterOptions.whiteList || {},
           ]);
         } else {
           xssFilterOptions[key] = filterOptions[key];
@@ -300,7 +300,7 @@ export class Sanitizer {
 
     return {
       isValid: value === sanitized,
-      sanitized
+      sanitized,
     };
   }
 
@@ -312,7 +312,7 @@ export class Sanitizer {
    * @returns {string} The encoded string value.
    * @memberof Sanitizer
    */
-  public encodeHTMLEntities(value: string): string {
+  public encodeHTML(value: string): string {
     return String(value).replace(/[&<>"'\/]/g, (s) => {
       return this._entityMap[s];
     });
@@ -328,7 +328,7 @@ export class Sanitizer {
    */
   public encodeAttrValue(value: string): string {
     const alphanumericRE = /^[a-zA-Z0-9]$/;
-    return String(value).replace(/[\x00-\x7F]/g, (c, idx) => {
+    return String(value).replace(/[\x00-\xFF]/g, (c, idx) => {
       return !alphanumericRE.test(c)
         ? `&#x${Number(value.charCodeAt(idx)).toString(16)};`
         : c;
@@ -349,8 +349,8 @@ export class Sanitizer {
   private _extendObjectOfArrays(objects: {}[]): {} {
     const finalObj = {};
 
-    objects.forEach(obj => {
-      Object.keys(obj).forEach(key => {
+    objects.forEach((obj) => {
+      Object.keys(obj).forEach((key) => {
         if (Array.isArray(obj[key]) && Array.isArray(finalObj[key])) {
           finalObj[key] = finalObj[key].concat(obj[key]);
         } else {

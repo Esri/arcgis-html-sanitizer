@@ -224,8 +224,8 @@ const styles = sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', {
 
 ```
 
-#### Encode HTML Entities
-The `encodeHTMLEntities` method encodes a well-defined set of characters within an HTML string to their hexadecimal HTML entity codes to ensure safe display of the string to the end user.
+#### Encode HTML
+The `encodeHTML` method encodes a well-defined set of characters within an HTML string to their hexadecimal HTML entity codes to ensure safe display of the string to the end user. This merely encodes HTML tags for as text in other HTML, it does not sanitize the string to prevent XSS. If you are looking to sanitize, use the `sanitize` method instead.
 
 * `&` &rarr; `&#x38;`
 * `<` &rarr; `&#x3C;`
@@ -239,7 +239,7 @@ The `encodeHTMLEntities` method encodes a well-defined set of characters within 
 const sanitizer = new Sanitizer();
 
 const input = `<a href="javascript:alert(document.cookies)">a link</a>`;
-sanitizer.encodeHTMLEntities(input);
+sanitizer.encodeHTML(input);
 // => "&#x3C;a href=&#x22;javascript:alert(document.cookies)&#x22;&#x3E;a link&#x3C;&#x2F;a&#x3E;"
 ```
 

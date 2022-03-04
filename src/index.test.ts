@@ -499,13 +499,13 @@ describe("Sanitizer", () => {
     expect(_trim(trimmedString)).toBe(trimmedString);
   });
 
-  test("encodes HTML entities", () => {
+  test("encodes HTML", () => {
     const sanitizer = new Sanitizer();
     const html = `<a href="https://someurl.tld">Link '1'</a> &middot; <a href="https://someurl.tld/path1">Link '2'</a>`;
     const encoded = `&#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x22;&#x3E;Link &#x27;1&#x27;&#x3C;&#x2F;a&#x3E; &#x38;middot; &#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x2F;path1&#x22;&#x3E;Link &#x27;2&#x27;&#x3C;&#x2F;a&#x3E;`;
     const text = "This is plain text with no encoding necessary.";
-    expect(sanitizer.encodeHTMLEntities(html)).toBe(encoded);
-    expect(sanitizer.encodeHTMLEntities(text)).toBe(text);
+    expect(sanitizer.encodeHTML(html)).toBe(encoded);
+    expect(sanitizer.encodeHTML(text)).toBe(text);
   });
 
   test("encodes HTML attribute values", () => {
