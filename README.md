@@ -224,6 +224,35 @@ const styles = sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', {
 
 ```
 
+#### Encode HTML Entities
+The `encodeHTMLEntities` method encodes a well-defined set of characters within an HTML string to their hexadecimal HTML entity codes to ensure safe display of the string to the end user.
+
+* `&` &rarr; `&#x38;`
+* `<` &rarr; `&#x3C;`
+* `>` &rarr; `&#x3E;`
+* `"` &rarr; `&#x22;`
+* `'` &rarr; `&#x27;`
+* `/` &rarr; `&#x2F;`
+
+
+```js
+const sanitizer = new Sanitizer();
+
+const input = `<a href="javascript:alert(document.cookies)">a link</a>`;
+sanitizer.encodeHTMLEntities(input);
+// => "&#x3C;a href=&#x22;javascript:alert(document.cookies)&#x22;&#x3E;a link&#x3C;&#x2F;a&#x3E;"
+```
+
+#### Encode Attribute Values
+The `encodeAttrValue` method encodes all non-alphanumeric ASCII characters to their hexadecimal HTML entity code to ensure safe use as an HTML attribute.
+
+```js
+const sanitizer = new Sanitizer();
+
+const input = "javascript:alert(document.cookies)";
+sanitizer.encodeAttrValue(input);
+// => "javascript&#x3a;alert&#x28;document&#x2e;cookie&#x29;"
+```
 
 #### Customizing Filter Options
 

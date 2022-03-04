@@ -498,4 +498,26 @@ describe("Sanitizer", () => {
     expect(_trim(str)).toBe(trimmedString);
     expect(_trim(trimmedString)).toBe(trimmedString);
   });
+
+  test("encodes HTML entities", () => {
+    const sanitizer = new Sanitizer();
+    const html = `<a href="https://someurl.tld">Link '1'</a> &middot; <a href="https://someurl.tld/path1">Link '2'</a>`;
+    const encoded = `&#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x22;&#x3E;Link &#x27;1&#x27;&#x3C;&#x2F;a&#x3E; &#x38;middot; &#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x2F;path1&#x22;&#x3E;Link &#x27;2&#x27;&#x3C;&#x2F;a&#x3E;`;
+    const text = "This is plain text with no encoding necessary.";
+    expect(sanitizer.encodeHTMLEntities(html)).toBe(encoded);
+    expect(sanitizer.encodeHTMLEntities(text)).toBe(text);
+  });
+
+  test("encodes HTML attribute values", () => {
+    const sanitizer = new Sanitizer();
+    const url = "https://someurl.tld/path1?f=json&ts=123002398483";
+    const alert = "javascript:alert(document.cookie)";
+    const encodedUrl =
+      "https&#x3a;&#x2f;&#x2f;someurl&#x2e;tld&#x2f;path1&#x3f;f&#x3d;json&#x26;ts&#x3d;123002398483";
+    const encodedAlert =
+      "javascript&#x3a;alert&#x28;document&#x2e;cookie&#x29;";
+    expect(sanitizer.encodeAttrValue(url)).toBe(encodedUrl);
+    expect(sanitizer.encodeAttrValue(alert)).toBe(encodedAlert);
+  });
+
 });

@@ -159,7 +159,15 @@ export class Sanitizer {
     }
   };
   public readonly xssFilterOptions: XSS.IFilterXSSOptions;
-  private _xssFilter: xss.FilterXSS;  
+  private _xssFilter: xss.FilterXSS;
+  private readonly _entityMap = {
+    "&": "&#x38;",
+    "<": "&#x3C;",
+    ">": "&#x3E;",
+    '"': "&#x22;",
+    "'": "&#x27;",
+    "/": "&#x2F;"
+  };
 
   constructor(filterOptions?: XSS.IFilterXSSOptions, extendDefaults?: boolean) {
     let xssFilterOptions: XSS.IFilterXSSOptions;
@@ -255,11 +263,21 @@ export class Sanitizer {
    * @returns {string} The sanitized attribute value.
    * @memberof Sanitizer
    */
-  public sanitizeHTMLAttribute(tag: string, attribute: string, value: string, cssFilter?: XSS.ICSSFilter): string {    
+  public sanitizeHTMLAttribute(
+    tag: string,
+    attribute: string,
+    value: string,
+    cssFilter?: XSS.ICSSFilter
+  ): string {
     // use the custom safeAttrValue function if provided
-    if (typeof this.xssFilterOptions.safeAttrValue === 'function') {      
-      // @ts-ignore safeAttrValue does handle undefined cssFilter
-      return this.xssFilterOptions.safeAttrValue(tag, attribute, value, cssFilter);
+    if (typeof this.xssFilterOptions.safeAttrValue === "function") {
+      return this.xssFilterOptions.safeAttrValue(
+        tag,
+        attribute,
+        value,
+        // @ts-ignore safeAttrValue does handle undefined cssFilter
+        cssFilter
+      );
     }
 
     // otherwise use the default
@@ -284,6 +302,37 @@ export class Sanitizer {
       isValid: value === sanitized,
       sanitized
     };
+  }
+
+  /**
+   * Encodes the following characters, `& < > \" ' /` to their hexadecimal HTML entity code.
+   * Example: "&middot;" => "&#x38;middot;"
+   *
+   * @param {string} value The value to encode.
+   * @returns {string} The encoded string value.
+   * @memberof Sanitizer
+   */
+  public encodeHTMLEntities(value: string): string {
+    return String(value).replace(/[&<>"'\/]/g, (s) => {
+      return this._entityMap[s];
+    });
+  }
+
+  /**
+   * Encodes all non-alphanumeric ASCII characters to their hexadecimal HTML entity codes.
+   * Example: "alert(document.cookie)" => "alert&#x28;document&#x2e;cookie&#x29;"
+   *
+   * @param {string} value The value to encode.
+   * @returns {string} The encoded string value.
+   * @memberof Sanitizer
+   */
+  public encodeAttrValue(value: string): string {
+    const alphanumericRE = /^[a-zA-Z0-9]$/;
+    return String(value).replace(/[\x00-\x7F]/g, (c, idx) => {
+      return !alphanumericRE.test(c)
+        ? `&#x${Number(value.charCodeAt(idx)).toString(16)};`
+        : c;
+    });
   }
 
   /**
