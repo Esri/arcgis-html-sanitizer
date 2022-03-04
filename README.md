@@ -225,7 +225,7 @@ const styles = sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', {
 ```
 
 #### Encode HTML
-The `encodeHTML` method encodes a well-defined set of characters within an HTML string to their hexadecimal HTML entity codes to ensure safe display of the string to the end user. This merely encodes HTML tags for as text in other HTML, it does not sanitize the string to prevent XSS. If you are looking to sanitize, use the `sanitize` method instead.
+The `encodeHTML` method encodes a well-defined set of characters within an HTML string to their hexadecimal HTML entity codes to ensure safe display of the string to the end user. This encodes HTML tags for display as text within an HTML page, it does not sanitize the string to prevent XSS. If you are looking to sanitize, use the `sanitize` method instead.
 
 * `&` &rarr; `&#x38;`
 * `<` &rarr; `&#x3C;`
