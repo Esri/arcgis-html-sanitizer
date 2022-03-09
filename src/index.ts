@@ -235,13 +235,10 @@ export class Sanitizer {
   }): string {
     const { isProtocolRequired = true } = options ?? {};
     const protocol = this._trim(value.substring(0, value.indexOf(":")));
-    const isInvalidProtocol = isProtocolRequired && this.allowedProtocols.indexOf(protocol.toLowerCase()) === -1;
-    if (
-      value !== "/" &&
-      value !== "#" &&
-      value[0] !== "#" &&
-      isInvalidProtocol
-    ) {
+    const isRootUrl = value === '/';
+    const isUrlFragment = /^#/.test(value);
+    const isValidProtocol = !isProtocolRequired || this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
+    if (!(isRootUrl || isUrlFragment || isValidProtocol)) {
       return "";
     } else {
       return xss.escapeAttrValue(value);
