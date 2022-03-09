@@ -227,7 +227,8 @@ export class Sanitizer {
    * Sanitizes a URL string following the allowed protocols and sanitization rules.
    *
    * @param {string} value The URL to sanitize.
-   * @returns {string} The sanitized URL.
+   * @param {{ isProtocolRequired: boolean }} options Configuration options for URL checking.
+   * @returns {string} The sanitized URL if it's valid, or an empty string if the URL is invalid.
    */
   public sanitizeUrl(value: string, options?: {
     /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. */
