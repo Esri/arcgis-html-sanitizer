@@ -371,11 +371,12 @@ describe("Sanitizer", () => {
     // Accept URLs without a protocol
     const withoutProtocol = "google.com";
 
-    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId, withoutProtocol].forEach(
+    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach(
       (url: string) => {
         expect(sanitizer.sanitizeUrl(url)).toBe(url);
       }
     );
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: false })).toBe(withoutProtocol);
   });
   
   test('sanitizes HTML attributes', () => {

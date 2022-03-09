@@ -229,15 +229,18 @@ export class Sanitizer {
    * @param {string} value The URL to sanitize.
    * @returns {string} The sanitized URL.
    */
-  public sanitizeUrl(value: string): string {
+  public sanitizeUrl(value: string, options?: {
+    /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. */
+    isProtocolRequired?: boolean;
+  }): string {
+    const { isProtocolRequired = true } = options ?? {};
     const protocol = this._trim(value.substring(0, value.indexOf(":")));
+    const isInvalidProtocol = isProtocolRequired && this.allowedProtocols.indexOf(protocol.toLowerCase()) === -1;
     if (
-      !(
-        value === "/" ||
-        value === "#" ||
-        value[0] === "#" ||
-        this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
-      )
+      value !== "/" &&
+      value !== "#" &&
+      value[0] !== "#" &&
+      isInvalidProtocol
     ) {
       return "";
     } else {
