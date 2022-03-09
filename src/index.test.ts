@@ -368,7 +368,10 @@ describe("Sanitizer", () => {
     const hash = "#";
     const hashId = "#test";
 
-    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach(
+    // Accept URLs without a protocol
+    const withoutProtocol = "google.com";
+
+    [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId, withoutProtocol].forEach(
       (url: string) => {
         expect(sanitizer.sanitizeUrl(url)).toBe(url);
       }
