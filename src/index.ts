@@ -227,22 +227,26 @@ export class Sanitizer {
    * Sanitizes a URL string following the allowed protocols and sanitization rules.
    *
    * @param {string} value The URL to sanitize.
-   * @returns {string} The sanitized URL.
+   * @param {{ isProtocolRequired: boolean }} options Configuration options for URL checking.
+   * @returns {string} The sanitized URL if it's valid, or an empty string if the URL is invalid.
    */
-  public sanitizeUrl(value: string): string {
+  public sanitizeUrl(value: string, options?: {
+    /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. If `false` and the provided URL has no protocol, it will be automatically prefixed with `https://`. */
+    isProtocolRequired?: boolean;
+  }): string {
+    const { isProtocolRequired = true } = options ?? {};
     const protocol = this._trim(value.substring(0, value.indexOf(":")));
-    if (
-      !(
-        value === "/" ||
-        value === "#" ||
-        value[0] === "#" ||
-        this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
-      )
-    ) {
-      return "";
-    } else {
+    const isRootUrl = value === '/';
+    const isUrlFragment = /^#/.test(value);
+    const isValidProtocol = protocol && this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
+
+    if (isRootUrl || isUrlFragment || isValidProtocol) {
       return xss.escapeAttrValue(value);
     }
+    if (!protocol && !isProtocolRequired) {
+      return xss.escapeAttrValue(`https://${value}`);
+    }
+    return "";
   }
 
   /**
