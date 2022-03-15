@@ -231,19 +231,22 @@ export class Sanitizer {
    * @returns {string} The sanitized URL if it's valid, or an empty string if the URL is invalid.
    */
   public sanitizeUrl(value: string, options?: {
-    /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. */
+    /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. If `false` and the provided URL has no protocol, it will be automatically prefixed with `https://`. */
     isProtocolRequired?: boolean;
   }): string {
     const { isProtocolRequired = true } = options ?? {};
     const protocol = this._trim(value.substring(0, value.indexOf(":")));
     const isRootUrl = value === '/';
     const isUrlFragment = /^#/.test(value);
-    const isValidProtocol = !isProtocolRequired || this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
-    if (!(isRootUrl || isUrlFragment || isValidProtocol)) {
-      return "";
-    } else {
+    const isValidProtocol = protocol && this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
+
+    if (isRootUrl || isUrlFragment || isValidProtocol) {
       return xss.escapeAttrValue(value);
     }
+    if (!protocol && !isProtocolRequired) {
+      return xss.escapeAttrValue(`https://${value}`);
+    }
+    return "";
   }
 
   /**
