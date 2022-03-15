@@ -376,7 +376,8 @@ describe("Sanitizer", () => {
         expect(sanitizer.sanitizeUrl(url)).toBe(url);
       }
     );
-    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: false })).toBe(withoutProtocol);
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: false })).toBe(`https://${withoutProtocol}`);
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: true })).toBe('');
   });
   
   test('sanitizes HTML attributes', () => {
