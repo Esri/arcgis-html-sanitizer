@@ -368,11 +368,16 @@ describe("Sanitizer", () => {
     const hash = "#";
     const hashId = "#test";
 
+    // Accept URLs without a protocol
+    const withoutProtocol = "google.com";
+
     [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach(
       (url: string) => {
         expect(sanitizer.sanitizeUrl(url)).toBe(url);
       }
     );
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: false })).toBe(`https://${withoutProtocol}`);
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: true })).toBe('');
   });
   
   test('sanitizes HTML attributes', () => {
