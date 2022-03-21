@@ -275,7 +275,7 @@ export class Sanitizer {
         tag,
         attribute,
         value,
-        // @ts-ignore safeAttrValue does handle undefined cssFilter
+        // @ts-expect-error safeAttrValue does handle undefined cssFilter
         cssFilter
       );
     }
