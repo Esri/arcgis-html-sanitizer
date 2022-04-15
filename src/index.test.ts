@@ -506,10 +506,21 @@ describe("Sanitizer", () => {
 
   test("encodes HTML", () => {
     const sanitizer = new Sanitizer();
+    const entities = ["&", "<", ">", '"', "'", "/"];
+    const mappedEntities = ["&#x38;", "&#x3C;", "&#x3E;", "&#x22;", "&#x27;", "&#x2F;"];
     const html = `<a href="https://someurl.tld">Link '1'</a> &middot; <a href="https://someurl.tld/path1">Link '2'</a>`;
     const encoded = `&#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x22;&#x3E;Link &#x27;1&#x27;&#x3C;&#x2F;a&#x3E; &#x38;middot; &#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x2F;path1&#x22;&#x3E;Link &#x27;2&#x27;&#x3C;&#x2F;a&#x3E;`;
     const text = "This is plain text with no encoding necessary.";
+
+    // check all characters encoded by this method
+    entities.forEach((entity: string, idx: number) => {
+      expect(sanitizer.encodeHTML(entity)).toBe(mappedEntities[idx]);
+    });
+
+    // ensure HTML string is encoded
     expect(sanitizer.encodeHTML(html)).toBe(encoded);
+
+    // Ensure text with none of the characters that are encoded is not transfored
     expect(sanitizer.encodeHTML(text)).toBe(text);
   });
 
@@ -521,7 +532,30 @@ describe("Sanitizer", () => {
       "https&#x3a;&#x2f;&#x2f;someurl&#x2e;tld&#x2f;path1&#x3f;f&#x3d;json&#x26;ts&#x3d;123002398483";
     const encodedAlert =
       "javascript&#x3a;alert&#x28;document&#x2e;cookie&#x29;";
+
+    // Ensure alphanumeric characters are not encoded
+    const alphanumeric =
+      "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+        ""
+      );
+    alphanumeric.forEach((char: string) => {
+      expect(sanitizer.encodeAttrValue(char)).toBe(char);
+    });
+
+    // Ensure non-alphanumeric characters are encoded between 0x00 and 0xFF
+    const alphanumericRE = /^[a-zA-Z0-9]$/;
+    for (let charCode = 0; charCode < 256; ++charCode) {
+      const char = String.fromCharCode(charCode);
+      if (!alphanumericRE.test(char)) {
+        const hexCharCode = charCode.toString(16);
+        expect(sanitizer.encodeAttrValue(char)).toBe(`&#x${hexCharCode};`);
+      }
+    }
+
+    // Ensure expected encoding happens for a sample URL
     expect(sanitizer.encodeAttrValue(url)).toBe(encodedUrl);
+
+    // Ensure expected encoding happens for a JavaScript alert statement
     expect(sanitizer.encodeAttrValue(alert)).toBe(encodedAlert);
   });
 
