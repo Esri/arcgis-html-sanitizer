@@ -552,6 +552,10 @@ describe("Sanitizer", () => {
       }
     }
 
+    // Ensure " and ' are encoded correctly
+    expect(sanitizer.encodeAttrValue('"')).toBe("&#x22;");
+    expect(sanitizer.encodeAttrValue("'")).toBe("&#x27;");
+
     // Ensure expected encoding happens for a sample URL
     expect(sanitizer.encodeAttrValue(url)).toBe(encodedUrl);
 
