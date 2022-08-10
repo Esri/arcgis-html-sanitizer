@@ -6,12 +6,8 @@
  * http://ucdok.com
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
- *
- * Lodash/isPlainObject
- * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
- * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
-import isPlainObject from "lodash.isplainobject";
+import isPlainObject from "./plainObject";
 import * as xss from "xss";
 
 /**

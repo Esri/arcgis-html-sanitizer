@@ -368,4 +368,3 @@ A copy of the license is available in the repository's [LICENSE](./LICENSE) file
 ### Dependencies
 
 - [js-xss](https://github.com/leizongmin/js-xss) ([MIT](https://github.com/leizongmin/js-xss#license))
-- [Lodash isPlainObject](https://www.npmjs.com/package/lodash.isplainobject) ([MIT](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE))
