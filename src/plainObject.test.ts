@@ -1,4 +1,3 @@
-// import ldIsPlainObject from "lodash.isplainobject";
 import isPlainObject from "./plainObject";
 
 describe("isPlainObject", () => {
