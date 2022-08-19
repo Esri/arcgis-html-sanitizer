@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Determine if the value is a plain object.
  * @param {*} value The value to check.
