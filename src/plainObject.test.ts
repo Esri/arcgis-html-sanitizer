@@ -49,7 +49,6 @@ describe("isPlainObject", () => {
     expect(isPlainObject(new Set())).toBeFalsy();
     expect(isPlainObject(new WeakSet())).toBeFalsy();
     expect(isPlainObject(Symbol())).toBeFalsy();
-    expect(isPlainObject(Reflect)).toBeFalsy();
     expect(isPlainObject(Foo)).toBeFalsy();
     expect(isPlainObject(Bar)).toBeFalsy();
     expect(isPlainObject(JSON)).toBeFalsy();
