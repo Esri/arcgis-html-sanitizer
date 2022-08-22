@@ -14,7 +14,7 @@
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
-    "types": ["lodash.isplainobject", "jest", "xss"]
+    "types": ["jest", "xss"]
   },
   "exclude": ["./src/**/*.test.ts"],
   "include": ["./src/**/*.ts"]

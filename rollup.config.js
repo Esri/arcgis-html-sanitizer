@@ -12,13 +12,9 @@ const banner = `/*!
  * ${pkg.license}
  * 
  * js-xss
- * Copyright (c) 2012-2017 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
+ * Copyright (c) 2012-2018 Zongmin Lei(雷宗民) <leizongmin@gmail.com>
  * http://ucdok.com
  * MIT License, see https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
- * 
- * Lodash/isPlainObject
- * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
- * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  */`;
 
 const createBaseConfig = (format) => ({
