@@ -563,4 +563,15 @@ describe("Sanitizer", () => {
     expect(sanitizer.encodeAttrValue(alert)).toBe(encodedAlert);
   });
 
+  test("strip ignore tag", () => {
+    const sanitizer = new Sanitizer({stripIgnoreTag: true});
+    const a = "Cows <5";
+    const aExpected = "Cows &lt;5";
+    const b = "Cows < 5";
+    const bExpected = "Cows &lt; 5";
+
+    expect(sanitizer.sanitize(a)).toBe(aExpected);
+    expect(sanitizer.sanitize(b)).toBe(bExpected);
+  });
+
 });

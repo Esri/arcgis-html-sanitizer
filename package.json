@@ -48,7 +48,7 @@
     ]
   },
   "dependencies": {
-    "xss": "^1.0.14"
+    "xss": "1.0.13"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
