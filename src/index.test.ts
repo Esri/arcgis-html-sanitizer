@@ -368,13 +368,18 @@ describe("Sanitizer", () => {
     const hash = "#";
     const hashId = "#test";
 
+    // Accept URLs without a protocol
+    const withoutProtocol = "google.com";
+
     [tel, mailto, capsHttps, capsTel, mixedHttp, root, hash, hashId].forEach(
       (url: string) => {
         expect(sanitizer.sanitizeUrl(url)).toBe(url);
       }
     );
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: false })).toBe(`https://${withoutProtocol}`);
+    expect(sanitizer.sanitizeUrl(withoutProtocol, { isProtocolRequired: true })).toBe('');
   });
-  
+
   test('sanitizes HTML attributes', () => {
     const sanitizer = new Sanitizer();
     // A pair of double quotes are encoded
@@ -384,50 +389,50 @@ describe("Sanitizer", () => {
     // Escaped double quotes are encoded
     expect(sanitizer.sanitizeHTMLAttribute('button', 'aria-label', '\"Text content\"')).toBe('&quot;Text content&quot;');
     // src with javascript URL should be removed
-    expect(sanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');    
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');
     // href with javascript URL should be removed
-    expect(sanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');    
+    expect(sanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');
     // background with javascript URL should be removed
     expect(sanitizer.sanitizeHTMLAttribute('div', 'background', 'javascript:alert("xss")')).toBe('');
     // style with javascript URL should be removed
-    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")")')).toBe('');                
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")")')).toBe('');
     // safe styles should be allowed
     expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;font-size:12px;')).toBe('color:red; font-size:12px;');
     // custom filter removes style value
-    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');                
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');
     // custom filter still disallows javascript URLs
-    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');        
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');
     // attempt to prematurely close the HTML element and inject script tag should be thwarted by encoding
-    expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"><script>alert("Text content")</script>')).toBe('&quot;&gt;&lt;script&gt;alert(&quot;Text content&quot;)&lt;/script&gt;')    
-    
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"><script>alert("Text content")</script>')).toBe('&quot;&gt;&lt;script&gt;alert(&quot;Text content&quot;)&lt;/script&gt;')
+
     const customSanitizer = new Sanitizer({
-      safeAttrValue: (tag, name, value, cssFilter) => {        
+      safeAttrValue: (tag, name, value, cssFilter) => {
         if (tag === 'div' && name === 'data-something') {
           return '';
         }
 
-        // this is only shown for testing; in practice a custom safeAttrValue needs to escape input 
+        // this is only shown for testing; in practice a custom safeAttrValue needs to escape input
         // (by calling `xss.safeAttrValue()` here) instead of returning it blindly
         return value;
-      }      
-    });    
-    // Removes attributes disallowed by custom safeAttrValue  
+      }
+    });
+    // Removes attributes disallowed by custom safeAttrValue
     expect(customSanitizer.sanitizeHTMLAttribute('div', 'data-something', 'Content')).toBe('');
-    // Preserves attributes allowed by custom safeAttrValue  
+    // Preserves attributes allowed by custom safeAttrValue
     expect(customSanitizer.sanitizeHTMLAttribute('img', 'alt', 'A picture')).toBe('A picture');
-    
+
     // no custom safeAttrValue
-    const anotherCustomSanitizer = new Sanitizer({});    
+    const anotherCustomSanitizer = new Sanitizer({});
     // basic quote escaping
     expect(anotherCustomSanitizer.sanitizeHTMLAttribute('button', 'aria-label', '"Text content"')).toBe('&quot;Text content&quot;');
     // src with javascript URL should be removed
-    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');    
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');
     // href with javascript URL should be removed
-    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe(''); 
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');
     // custom filter removes style value
-    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');                
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');
     // custom filter still disallows javascript URLs
-    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');               
+    expect(anotherCustomSanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');
   });
 
   test("check for some of the allowed tags and attributes", () => {
@@ -498,4 +503,75 @@ describe("Sanitizer", () => {
     expect(_trim(str)).toBe(trimmedString);
     expect(_trim(trimmedString)).toBe(trimmedString);
   });
+
+  test("encodes HTML", () => {
+    const sanitizer = new Sanitizer();
+    const entities = ["&", "<", ">", '"', "'", "/"];
+    const mappedEntities = ["&#x38;", "&#x3C;", "&#x3E;", "&#x22;", "&#x27;", "&#x2F;"];
+    const html = `<a href="https://someurl.tld">Link '1'</a> &middot; <a href="https://someurl.tld/path1">Link '2'</a>`;
+    const encoded = `&#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x22;&#x3E;Link &#x27;1&#x27;&#x3C;&#x2F;a&#x3E; &#x38;middot; &#x3C;a href=&#x22;https:&#x2F;&#x2F;someurl.tld&#x2F;path1&#x22;&#x3E;Link &#x27;2&#x27;&#x3C;&#x2F;a&#x3E;`;
+    const text = "This is plain text with no encoding necessary.";
+
+    // check all characters encoded by this method
+    entities.forEach((entity: string, idx: number) => {
+      expect(sanitizer.encodeHTML(entity)).toBe(mappedEntities[idx]);
+    });
+
+    // ensure HTML string is encoded
+    expect(sanitizer.encodeHTML(html)).toBe(encoded);
+
+    // Ensure text with none of the characters that are encoded is not transfored
+    expect(sanitizer.encodeHTML(text)).toBe(text);
+  });
+
+  test("encodes HTML attribute values", () => {
+    const sanitizer = new Sanitizer();
+    const url = "https://someurl.tld/path1?f=json&ts=123002398483";
+    const alert = "javascript:alert(document.cookie)";
+    const encodedUrl =
+      "https&#x3a;&#x2f;&#x2f;someurl&#x2e;tld&#x2f;path1&#x3f;f&#x3d;json&#x26;ts&#x3d;123002398483";
+    const encodedAlert =
+      "javascript&#x3a;alert&#x28;document&#x2e;cookie&#x29;";
+
+    // Ensure alphanumeric characters are not encoded
+    const alphanumeric =
+      "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split(
+        ""
+      );
+    alphanumeric.forEach((char: string) => {
+      expect(sanitizer.encodeAttrValue(char)).toBe(char);
+    });
+
+    // Ensure non-alphanumeric characters are encoded between 0x00 and 0xFF
+    const alphanumericRE = /^[a-zA-Z0-9]$/;
+    for (let charCode = 0; charCode < 256; ++charCode) {
+      const char = String.fromCharCode(charCode);
+      if (!alphanumericRE.test(char)) {
+        const hexCharCode = charCode.toString(16);
+        expect(sanitizer.encodeAttrValue(char)).toBe(`&#x${hexCharCode};`);
+      }
+    }
+
+    // Ensure " and ' are encoded correctly
+    expect(sanitizer.encodeAttrValue('"')).toBe("&#x22;");
+    expect(sanitizer.encodeAttrValue("'")).toBe("&#x27;");
+
+    // Ensure expected encoding happens for a sample URL
+    expect(sanitizer.encodeAttrValue(url)).toBe(encodedUrl);
+
+    // Ensure expected encoding happens for a JavaScript alert statement
+    expect(sanitizer.encodeAttrValue(alert)).toBe(encodedAlert);
+  });
+
+  test("strip ignore tag", () => {
+    const sanitizer = new Sanitizer({stripIgnoreTag: true});
+    const a = "Cows <5";
+    const aExpected = "Cows &lt;5";
+    const b = "Cows < 5";
+    const bExpected = "Cows &lt; 5";
+
+    expect(sanitizer.sanitize(a)).toBe(aExpected);
+    expect(sanitizer.sanitize(b)).toBe(bExpected);
+  });
+
 });

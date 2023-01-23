@@ -6,12 +6,8 @@
  * http://ucdok.com
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
- *
- * Lodash/isPlainObject
- * Copyright (c) JS Foundation and other contributors <https://js.foundation/>
- * MIT License, see https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE for details
  * */
-import isPlainObject from "lodash.isplainobject";
+import isPlainObject from "./plainObject";
 import * as xss from "xss";
 
 /**
@@ -85,7 +81,7 @@ export class Sanitizer {
       "rowspan",
       "style",
       "valign",
-      "width"
+      "width",
     ],
     th: [
       "align",
@@ -95,7 +91,7 @@ export class Sanitizer {
       "rowspan",
       "style",
       "valign",
-      "width"
+      "width",
     ],
     u: [],
     ul: [],
@@ -107,8 +103,8 @@ export class Sanitizer {
       "muted",
       "poster",
       "preload",
-      "width"
-    ]
+      "width",
+    ],
   };
   public readonly allowedProtocols: string[] = [
     "http",
@@ -136,7 +132,7 @@ export class Sanitizer {
     "awb",
     "awbs",
     "gropen",
-    "radarscope"
+    "radarscope",
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
@@ -156,10 +152,18 @@ export class Sanitizer {
         return this.sanitizeUrl(value);
       }
       return xss.safeAttrValue(tag, name, value, cssFilter);
-    }
+    },
   };
   public readonly xssFilterOptions: XSS.IFilterXSSOptions;
   private _xssFilter: xss.FilterXSS;
+  private readonly _entityMap = {
+    "&": "&#x38;",
+    "<": "&#x3C;",
+    ">": "&#x3E;",
+    '"': "&#x22;",
+    "'": "&#x27;",
+    "/": "&#x2F;",
+  };
 
   constructor(filterOptions?: XSS.IFilterXSSOptions, extendDefaults?: boolean) {
     let xssFilterOptions: XSS.IFilterXSSOptions;
@@ -170,12 +174,12 @@ export class Sanitizer {
     } else if (filterOptions && extendDefaults) {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
-      Object.keys(filterOptions).forEach(key => {
+      Object.keys(filterOptions).forEach((key) => {
         if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
             this.arcgisWhiteList,
-            filterOptions.whiteList || {}
+            filterOptions.whiteList || {},
           ]);
         } else {
           xssFilterOptions[key] = filterOptions[key];
@@ -227,22 +231,26 @@ export class Sanitizer {
    * Sanitizes a URL string following the allowed protocols and sanitization rules.
    *
    * @param {string} value The URL to sanitize.
-   * @returns {string} The sanitized URL.
+   * @param {{ isProtocolRequired: boolean }} options Configuration options for URL checking.
+   * @returns {string} The sanitized URL if it's valid, or an empty string if the URL is invalid.
    */
-  public sanitizeUrl(value: string): string {
+  public sanitizeUrl(value: string, options?: {
+    /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. If `false` and the provided URL has no protocol, it will be automatically prefixed with `https://`. */
+    isProtocolRequired?: boolean;
+  }): string {
+    const { isProtocolRequired = true } = options ?? {};
     const protocol = this._trim(value.substring(0, value.indexOf(":")));
-    if (
-      !(
-        value === "/" ||
-        value === "#" ||
-        value[0] === "#" ||
-        this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1
-      )
-    ) {
-      return "";
-    } else {
+    const isRootUrl = value === '/';
+    const isUrlFragment = /^#/.test(value);
+    const isValidProtocol = protocol && this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
+
+    if (isRootUrl || isUrlFragment || isValidProtocol) {
       return xss.escapeAttrValue(value);
     }
+    if (!protocol && !isProtocolRequired) {
+      return xss.escapeAttrValue(`https://${value}`);
+    }
+    return "";
   }
 
   /**
@@ -255,11 +263,21 @@ export class Sanitizer {
    * @returns {string} The sanitized attribute value.
    * @memberof Sanitizer
    */
-  public sanitizeHTMLAttribute(tag: string, attribute: string, value: string, cssFilter?: XSS.ICSSFilter): string {
+  public sanitizeHTMLAttribute(
+    tag: string,
+    attribute: string,
+    value: string,
+    cssFilter?: XSS.ICSSFilter
+  ): string {
     // use the custom safeAttrValue function if provided
-    if (typeof this.xssFilterOptions.safeAttrValue === 'function') {
-      // @ts-ignore safeAttrValue does handle undefined cssFilter
-      return this.xssFilterOptions.safeAttrValue(tag, attribute, value, cssFilter);
+    if (typeof this.xssFilterOptions.safeAttrValue === "function") {
+      return this.xssFilterOptions.safeAttrValue(
+        tag,
+        attribute,
+        value,
+        // @ts-expect-error safeAttrValue does handle undefined cssFilter
+        cssFilter
+      );
     }
 
     // otherwise use the default
@@ -282,8 +300,39 @@ export class Sanitizer {
 
     return {
       isValid: value === sanitized,
-      sanitized
+      sanitized,
     };
+  }
+
+  /**
+   * Encodes the following characters, `& < > \" ' /` to their hexadecimal HTML entity code.
+   * Example: "&middot;" => "&#x38;middot;"
+   *
+   * @param {string} value The value to encode.
+   * @returns {string} The encoded string value.
+   * @memberof Sanitizer
+   */
+  public encodeHTML(value: string): string {
+    return String(value).replace(/[&<>"'\/]/g, (s) => {
+      return this._entityMap[s];
+    });
+  }
+
+  /**
+   * Encodes all non-alphanumeric ASCII characters to their hexadecimal HTML entity codes.
+   * Example: "alert(document.cookie)" => "alert&#x28;document&#x2e;cookie&#x29;"
+   *
+   * @param {string} value The value to encode.
+   * @returns {string} The encoded string value.
+   * @memberof Sanitizer
+   */
+  public encodeAttrValue(value: string): string {
+    const alphanumericRE = /^[a-zA-Z0-9]$/;
+    return String(value).replace(/[\x00-\xFF]/g, (c, idx) => {
+      return !alphanumericRE.test(c)
+        ? `&#x${Number(value.charCodeAt(idx)).toString(16)};`
+        : c;
+    });
   }
 
   /**
@@ -300,8 +349,8 @@ export class Sanitizer {
   private _extendObjectOfArrays(objects: {}[]): {} {
     const finalObj = {};
 
-    objects.forEach(obj => {
-      Object.keys(obj).forEach(key => {
+    objects.forEach((obj) => {
+      Object.keys(obj).forEach((key) => {
         if (Array.isArray(obj[key]) && Array.isArray(finalObj[key])) {
           finalObj[key] = finalObj[key].concat(obj[key]);
         } else {
