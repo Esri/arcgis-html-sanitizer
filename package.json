@@ -1,6 +1,6 @@
 {
   "name": "@esri/arcgis-html-sanitizer",
-  "version": "2.9.0",
+  "version": "3.0.1",
   "description": "A simple utility to sanitize a string according to ArcGIS supported HTML specification.",
   "main": "dist/node/index.js",
   "module": "dist/esm/index.js",
@@ -48,25 +48,23 @@
     ]
   },
   "dependencies": {
-    "lodash.isplainobject": "^4.0.6",
-    "xss": "^1.0.10"
+    "xss": "1.0.13"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.1",
-    "@rollup/plugin-node-resolve": "^13.1.1",
-    "@rollup/plugin-replace": "^3.0.0",
-    "@rollup/plugin-typescript": "^8.3.0",
-    "@types/jest": "^27.0.3",
-    "@types/lodash.isplainobject": "^4.0.6",
-    "jest": "^27.4.5",
+    "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-typescript": "^8.3.4",
+    "@types/jest": "^28.1.7",
+    "jest": "^28.1.3",
     "rimraf": "^3.0.2",
-    "rollup": "^2.61.1",
+    "rollup": "^2.78.1",
     "rollup-plugin-terser": "^7.0.2",
-    "ts-jest": "^27.1.1",
+    "ts-jest": "^28.0.8",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
-    "typescript": "^4.5.3"
+    "typescript": "^4.7.4"
   },
   "publishConfig": {
     "access": "public"
