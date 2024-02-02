@@ -7,8 +7,8 @@
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
  * */
-import isPlainObject from "./plainObject";
 import * as xss from "xss";
+import isPlainObject from "./plainObject";
 
 /**
  * The response from the validate method
@@ -46,7 +46,7 @@ export class Sanitizer {
     b: [],
     br: [],
     dd: ["style"],
-    div: ["align", "style"],
+    div: ["align", "aria-hidden", "aria-label", "style"],
     dl: ["style"],
     dt: ["style"],
     em: [],

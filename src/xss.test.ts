@@ -742,4 +742,36 @@ describe('XSS Sanitizing', () => {
 
     expect(sanitizer.sanitize(dirty)).toEqual(clean);
   });
+
+  test('Legitimate style attribute', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div style="width:100%;"><div>`;
+    const clean = `<div style="width:100%;"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Legitimate aria-label attribute', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div aria-label="my description"><div>`;
+    const clean = `<div aria-label="my description"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Legitimate aria-hidden attribute', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div aria-hidden="true"><div>`;
+    const clean = `<div aria-hidden="true"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
+
+  test('Attempted malicious aria-label attribute, but not executable', () => {
+    const sanitizer = new Sanitizer();
+    const dirty = `<div aria-label="javascript:document.location=\'http://www.google.com/\'"><div>`;
+    const clean = `<div aria-label="javascript:document.location=\'http://www.google.com/\'"><div>`;
+
+    expect(sanitizer.sanitize(dirty)).toEqual(clean);
+  });
 });
