@@ -42,33 +42,46 @@ export class Sanitizer {
   public readonly arcgisWhiteList: IWhiteList = {
     a: ["href", "style", "target"],
     abbr: ["title"],
+    article: ["style"],
+    aside: ["style"],
     audio: ["autoplay", "controls", "loop", "muted", "preload"],
     b: [],
+    blockquote: ["style"],
     br: [],
+    code: ["style"],
     dd: ["style"],
-    div: ["align", "style"],
+    details: ["style"],
+    div: ["align", "style", "aria-label", "aria-hidden"],
     dl: ["style"],
     dt: ["style"],
     em: [],
     figcaption: ["style"],
     figure: ["style"],
     font: ["color", "face", "size", "style"],
+    footer: ["style"],
     h1: ["style"],
     h2: ["style"],
     h3: ["style"],
     h4: ["style"],
     h5: ["style"],
     h6: ["style"],
+    header: ["style"],
     hr: [],
     i: [],
     img: ["alt", "border", "height", "src", "style", "width"],
     li: [],
+    main: ["style"],
+    mark: ["style"],
+    nav: ["style"],
     ol: [],
     p: ["style"],
+    pre: ["style"],
+    section: ["style"],
     source: ["media", "src", "type"],
     span: ["style"],
     strong: [],
     sub: ["style"],
+    summary: ["style"],
     sup: ["style"],
     table: ["border", "cellpadding", "cellspacing", "height", "style", "width"],
     tbody: [],
@@ -93,6 +106,7 @@ export class Sanitizer {
       "valign",
       "width",
     ],
+    time: ["style"],
     u: [],
     ul: [],
     video: [
@@ -234,15 +248,19 @@ export class Sanitizer {
    * @param {{ isProtocolRequired: boolean }} options Configuration options for URL checking.
    * @returns {string} The sanitized URL if it's valid, or an empty string if the URL is invalid.
    */
-  public sanitizeUrl(value: string, options?: {
-    /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. If `false` and the provided URL has no protocol, it will be automatically prefixed with `https://`. */
-    isProtocolRequired?: boolean;
-  }): string {
+  public sanitizeUrl(
+    value: string,
+    options?: {
+      /** Whether a protocol must exist on the URL for it to be considered valid. Defaults to `true`. If `false` and the provided URL has no protocol, it will be automatically prefixed with `https://`. */
+      isProtocolRequired?: boolean;
+    }
+  ): string {
     const { isProtocolRequired = true } = options ?? {};
     const protocol = this._trim(value.substring(0, value.indexOf(":")));
-    const isRootUrl = value === '/';
+    const isRootUrl = value === "/";
     const isUrlFragment = /^#/.test(value);
-    const isValidProtocol = protocol && this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
+    const isValidProtocol =
+      protocol && this.allowedProtocols.indexOf(protocol.toLowerCase()) > -1;
 
     if (isRootUrl || isUrlFragment || isValidProtocol) {
       return xss.escapeAttrValue(value);
