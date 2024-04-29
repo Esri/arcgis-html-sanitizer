@@ -50,13 +50,13 @@ describe("Sanitizer", () => {
 
     // Extending the defaults
     const sanitizer2 = new Sanitizer(
-      { allowCommentTag: false, whiteList: { blockquote: [] } },
+      { allowCommentTag: false, whiteList: { blink: [] } },
       true
     );
     const defaultSanitizer2 = new Sanitizer();
     const filterOptions2 = Object.create(defaultSanitizer2.arcgisFilterOptions);
     filterOptions2.whiteList = defaultSanitizer2.arcgisWhiteList;
-    filterOptions2.whiteList.blockquote = [];
+    filterOptions2.whiteList.blink = [];
     filterOptions2.allowCommentTag = false;
     expect(sanitizer2.xssFilterOptions).toEqual(filterOptions2);
 
@@ -389,21 +389,21 @@ describe("Sanitizer", () => {
     // Escaped double quotes are encoded
     expect(sanitizer.sanitizeHTMLAttribute('button', 'aria-label', '\"Text content\"')).toBe('&quot;Text content&quot;');
     // src with javascript URL should be removed
-    expect(sanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');    
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'src', 'javascript:alert("xss")')).toBe('');
     // href with javascript URL should be removed
-    expect(sanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');    
+    expect(sanitizer.sanitizeHTMLAttribute('a', 'href', 'javascript:alert("xss")')).toBe('');
     // background with javascript URL should be removed
     expect(sanitizer.sanitizeHTMLAttribute('div', 'background', 'javascript:alert("xss")')).toBe('');
     // style with javascript URL should be removed
-    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")")')).toBe('');                
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")")')).toBe('');
     // safe styles should be allowed
     expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;font-size:12px;')).toBe('color:red; font-size:12px;');
     // custom filter removes style value
-    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');                
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'color:red;', { process: (value: string) => value.indexOf('color') !== -1 ? '' : value })).toBe('');
     // custom filter still disallows javascript URLs
-    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');        
+    expect(sanitizer.sanitizeHTMLAttribute('div', 'style', 'background-image:url("javascript:alert(\"xss\")"', { process: (value: string) => value })).toBe('');
     // attempt to prematurely close the HTML element and inject script tag should be thwarted by encoding
-    expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"><script>alert("Text content")</script>')).toBe('&quot;&gt;&lt;script&gt;alert(&quot;Text content&quot;)&lt;/script&gt;')    
+    expect(sanitizer.sanitizeHTMLAttribute('img', 'alt', '"><script>alert("Text content")</script>')).toBe('&quot;&gt;&lt;script&gt;alert(&quot;Text content&quot;)&lt;/script&gt;');
     
     const customSanitizer = new Sanitizer({
       safeAttrValue: (tag, name, value, cssFilter) => {        
@@ -572,6 +572,17 @@ describe("Sanitizer", () => {
 
     expect(sanitizer.sanitize(a)).toBe(aExpected);
     expect(sanitizer.sanitize(b)).toBe(bExpected);
+  });
+
+  test("pre sanitizes contents", () => {
+    const sanitizer = new Sanitizer();
+    const script = "<pre><script>alert(1)</script></pre>";
+    const sanitizedScript = "<pre>&lt;script&gt;alert(1)&lt;/script&gt;</pre>";
+    const includesAllowed = "<pre><p><script>alert(1)</script><p></pre>";
+    const sanitizedAllowed = "<pre><p>&lt;script&gt;alert(1)&lt;/script&gt;<p></pre>";
+
+    expect(sanitizer.sanitize(script)).toBe(sanitizedScript);
+    expect(sanitizer.sanitize(includesAllowed)).toBe(sanitizedAllowed);
   });
 
 });
