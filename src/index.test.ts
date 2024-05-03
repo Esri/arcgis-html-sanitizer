@@ -1,3 +1,4 @@
+import { getDefaultCSSWhiteList } from "xss";
 import { Sanitizer } from "./index";
 
 // This file contains basic tests that validate the utility methods.
@@ -38,6 +39,20 @@ describe("Sanitizer", () => {
     "radarscope"
   ];
 
+  function getCSSOptions() {
+    const cssWhiteList = getDefaultCSSWhiteList();
+    cssWhiteList["flex"] = true;
+    cssWhiteList["flex-basis"] = true;
+    cssWhiteList["flex-direction"] = true;
+    cssWhiteList["flex-flow"] = true;
+    cssWhiteList["flex-grow"] = true;
+    cssWhiteList["flex-shrink"] = true;
+    cssWhiteList["flex-wrap"] = true;
+    cssWhiteList["line-height"] = true;
+    cssWhiteList["overflow"] = true;
+    return { whiteList: cssWhiteList };
+  }
+
   test("creates the Sanitizer object and extends options appropriately", () => {
     // Test with no arguments
     const sanitizer1 = new Sanitizer();
@@ -46,6 +61,7 @@ describe("Sanitizer", () => {
       defaultSanitizer1.arcgisFilterOptions
     );
     defaultOptions1.whiteList = defaultSanitizer1.arcgisWhiteList;
+    defaultOptions1.css = getCSSOptions();
     expect(sanitizer1.xssFilterOptions).toEqual(defaultOptions1);
 
     // Extending the defaults
@@ -58,6 +74,7 @@ describe("Sanitizer", () => {
     filterOptions2.whiteList = defaultSanitizer2.arcgisWhiteList;
     filterOptions2.whiteList.blink = [];
     filterOptions2.allowCommentTag = false;
+    filterOptions2.css = getCSSOptions();
     expect(sanitizer2.xssFilterOptions).toEqual(filterOptions2);
 
     // Passing an empty whitelist
@@ -68,11 +85,23 @@ describe("Sanitizer", () => {
       defaultSanitizer3.arcgisFilterOptions
     );
     defaultOptions3.whiteList = defaultSanitizer3.arcgisWhiteList;
+    defaultOptions3.css = getCSSOptions();
     expect(sanitizer3.xssFilterOptions).toEqual(defaultOptions3);
 
     // Test overriding defaults
     const sanitizer4 = new Sanitizer({ whiteList: { a: [] } });
     expect(sanitizer4.xssFilterOptions).toEqual({ whiteList: { a: [] } });
+
+    // Extending the CSS defaults
+    const sanitizer5 = new Sanitizer({ css: { whiteList: { "line-height": false } } }, true);
+    const defaultSanitizer5 = new Sanitizer();
+    const defaultOptions5 = Object.create(
+      defaultSanitizer5.arcgisFilterOptions
+    );
+    defaultOptions5.css = getCSSOptions();
+    defaultOptions5.css.whiteList["line-height"] = false;
+    expect((sanitizer5.xssFilterOptions.css as any).whiteList["line-height"]).toEqual(false);
+    expect(sanitizer5.xssFilterOptions).toEqual(defaultOptions5);
   });
 
   test("sanitizes a value", () => {
@@ -451,6 +480,7 @@ describe("Sanitizer", () => {
     const strippedVideoSrc = "<video controls>";
     const fontFace = `<font face="Arial">Text content</font>`;
     const figure = `<figure style="background-color:blue;background-image:url("javascript:alert(\"xss\")";" onerror="alert(1)" onclick="javascript:alert(\"xss\")"><figcaption style="background-color:red;background-image:url("javascript:alert(\"xss\")";" onerror="alert(1)" onclick="javascript:alert(\"xss\")">Figure Caption</figcaption></figure>`;
+    const flexContainer = `<div style="flex:1 1 0%; flex-direction:column;">Flex container</div>`;
     const elementsWithStyle = ["a", "img", "span", "div", "font", "table", "tr", "th", "td", "p", "dd", "dl", "dt", "h1", "h2", "h3", "h4", "h5", "h6", "sub", "sup"];
 
     const sanitizer = new Sanitizer();
@@ -466,6 +496,7 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(video)).toBe(video);
     expect(sanitizer.sanitize(stripVideoSrc)).toBe(strippedVideoSrc);
     expect(sanitizer.sanitize(fontFace)).toBe(fontFace);
+    expect(sanitizer.sanitize(flexContainer)).toBe(flexContainer);
     expect(sanitizer.sanitize(figure)).toBe(
       `<figure style="background-color:blue;"><figcaption style="background-color:red;">Figure Caption</figcaption></figure>`
     );
@@ -583,6 +614,23 @@ describe("Sanitizer", () => {
 
     expect(sanitizer.sanitize(script)).toBe(sanitizedScript);
     expect(sanitizer.sanitize(includesAllowed)).toBe(sanitizedAllowed);
+  });
+
+  test("css overrides", () => {
+    const sanitizer = new Sanitizer();
+    const flexProperties = [
+      "flex:1 1 0%;",
+      "flex-basis:0.25rem;",
+      "flex-direction:row;",
+      "flex-flow:row wrap;",
+      "flex-grow:1;",
+      "flex-shrink:1;",
+      "flex-wrap:wrap;",
+    ];
+    flexProperties.forEach((prop) => {
+      const value = `<div style="${prop}">Flex property test</div>`;
+      expect(sanitizer.sanitize(value)).toBe(value);
+    });
   });
 
 });
