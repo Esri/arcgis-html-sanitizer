@@ -10,7 +10,6 @@
 import isPlainObject from "./plainObject";
 import * as xss from "xss";
 
-
 /**
  * The response from the validate method
  *
