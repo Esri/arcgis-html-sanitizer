@@ -93,14 +93,16 @@ describe("Sanitizer", () => {
     expect(sanitizer4.xssFilterOptions).toEqual({ whiteList: { a: [] } });
 
     // Extending the CSS defaults
-    const sanitizer5 = new Sanitizer({ css: { whiteList: { "line-height": false } } }, true);
+    const sanitizer5 = new Sanitizer({ css: { whiteList: { "line-height": false, "align-items": true } } }, true);
     const defaultSanitizer5 = new Sanitizer();
     const defaultOptions5 = Object.create(
       defaultSanitizer5.arcgisFilterOptions
     );
     defaultOptions5.css = getCSSOptions();
     defaultOptions5.css.whiteList["line-height"] = false;
-    expect((sanitizer5.xssFilterOptions.css as any).whiteList["line-height"]).toEqual(false);
+    defaultOptions5.css.whiteList["align-items"] = true;
+    expect((sanitizer5.xssFilterOptions.css as any).whiteList["line-height"]).toBeFalsy();
+    expect((sanitizer5.xssFilterOptions.css as any).whiteList["align-items"]).toBeTruthy();
     expect(sanitizer5.xssFilterOptions).toEqual(defaultOptions5);
   });
 

@@ -218,8 +218,14 @@ export class Sanitizer {
             filterOptions.whiteList || {},
           ]);
         } else if (key === "css") {
-          const cssExtensions = filterOptions[key] instanceof Object ? (filterOptions[key] as ICSSFilter).whiteList ?? {} : {};
-          Object.keys(cssExtensions).forEach((attr) => (xssFilterOptions[key] as ICSSFilter).whiteList[attr] = cssExtensions[attr]);
+          const cssExtensions = (filterOptions.css as ICSSFilter).whiteList;
+          if (cssExtensions != null && filterOptions.css instanceof Object) {
+            Object.keys(cssExtensions).forEach(
+              (attr) =>
+                ((xssFilterOptions.css as ICSSFilter).whiteList[attr] =
+                  cssExtensions[attr])
+            );
+          }
         } else {
           xssFilterOptions[key] = filterOptions[key];
         }
