@@ -635,4 +635,21 @@ describe("Sanitizer", () => {
     });
   });
 
+  test("public css filter", () => {
+    const sanitizer = new Sanitizer();
+    const expectedWhitelist = {
+      ...getDefaultCSSWhiteList(),
+      "flex": true,
+      "flex-basis": true,
+      "flex-direction": true,
+      "flex-flow": true,
+      "flex-grow": true,
+      "flex-shrink": true,
+      "flex-wrap": true,
+      "line-height": true,
+      "overflow": true
+    };
+    expect(sanitizer.arcgisCSSWhiteList).toEqual(expectedWhitelist);
+  });
+
 });

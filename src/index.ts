@@ -127,7 +127,8 @@ export class Sanitizer {
       "width",
     ],
   };
-  private readonly arcgisCSSWhiteListOverrides: ICSSWhiteList = {
+  public readonly arcgisCSSWhiteList: ICSSWhiteList = {
+    ...xss.getDefaultCSSWhiteList() as any,
     "flex": true,
     "flex-basis": true,
     "flex-direction": true,
@@ -204,11 +205,9 @@ export class Sanitizer {
       // Override the defaults
       xssFilterOptions = filterOptions;
     } else if (filterOptions && extendDefaults) {
-      const cssWhiteList = this._getArcGISCSSWhiteList();
-
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
-      xssFilterOptions.css = { whiteList: cssWhiteList };
+      xssFilterOptions.css = { whiteList: this.arcgisCSSWhiteList };
       Object.keys(filterOptions).forEach((key) => {
         if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
@@ -233,7 +232,7 @@ export class Sanitizer {
       // Only use the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       xssFilterOptions.whiteList = this.arcgisWhiteList;
-      xssFilterOptions.css = { whiteList: this._getArcGISCSSWhiteList() };
+      xssFilterOptions.css = { whiteList: this.arcgisCSSWhiteList };
     }
 
     this.xssFilterOptions = xssFilterOptions;
@@ -382,14 +381,6 @@ export class Sanitizer {
         ? `&#x${Number(value.charCodeAt(idx)).toString(16)};`
         : c;
     });
-  }
-
-  private _getArcGISCSSWhiteList() {
-    const cssWhiteList = xss.getDefaultCSSWhiteList();
-    Object.keys(this.arcgisCSSWhiteListOverrides).forEach((key) => {
-      cssWhiteList[key] = this.arcgisCSSWhiteListOverrides[key];
-    });
-    return cssWhiteList;
   }
 
   /**
