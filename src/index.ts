@@ -25,6 +25,13 @@ export interface IWhiteList extends XSS.IWhiteList {
   source?: string[];
 }
 
+export interface ICSSFilter extends XSS.ICSSFilter {
+  whiteList: ICSSWhiteList;
+}
+export interface ICSSWhiteList {
+  [key: string]: boolean;
+}
+
 /** Options to apply to sanitize method */
 export interface ISanitizeOptions {
   /* Don't convert undefined to null */
@@ -120,6 +127,18 @@ export class Sanitizer {
       "width",
     ],
   };
+  public readonly arcgisCSSWhiteList: ICSSWhiteList = {
+    ...xss.getDefaultCSSWhiteList() as any,
+    "flex": true,
+    "flex-basis": true,
+    "flex-direction": true,
+    "flex-flow": true,
+    "flex-grow": true,
+    "flex-shrink": true,
+    "flex-wrap": true,
+    "line-height": true,
+    "overflow": true
+  };
   public readonly allowedProtocols: string[] = [
     "http",
     "https",
@@ -188,6 +207,7 @@ export class Sanitizer {
     } else if (filterOptions && extendDefaults) {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
+      xssFilterOptions.css = { whiteList: this.arcgisCSSWhiteList };
       Object.keys(filterOptions).forEach((key) => {
         if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
@@ -195,6 +215,15 @@ export class Sanitizer {
             this.arcgisWhiteList,
             filterOptions.whiteList || {},
           ]);
+        } else if (key === "css") {
+          const cssExtensions = (filterOptions.css as ICSSFilter).whiteList;
+          if (cssExtensions != null && filterOptions.css instanceof Object) {
+            Object.keys(cssExtensions).forEach(
+              (attr) =>
+                ((xssFilterOptions.css as ICSSFilter).whiteList[attr] =
+                  cssExtensions[attr])
+            );
+          }
         } else {
           xssFilterOptions[key] = filterOptions[key];
         }
@@ -203,6 +232,7 @@ export class Sanitizer {
       // Only use the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       xssFilterOptions.whiteList = this.arcgisWhiteList;
+      xssFilterOptions.css = { whiteList: this.arcgisCSSWhiteList };
     }
 
     this.xssFilterOptions = xssFilterOptions;
