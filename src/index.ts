@@ -7,8 +7,8 @@
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
  * */
-import isPlainObject from "./plainObject";
 import * as xss from "xss";
+import isPlainObject from "./plainObject";
 
 /**
  * The response from the validate method
@@ -208,7 +208,7 @@ export class Sanitizer {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       xssFilterOptions.css = { whiteList: this.arcgisCSSWhiteList };
-      Object.keys(filterOptions).forEach((key) => {
+      (Object.keys(filterOptions) as (keyof XSS.IFilterXSSOptions)[]).forEach(<T extends keyof XSS.IFilterXSSOptions>(key: T) => {
         if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
@@ -362,7 +362,7 @@ export class Sanitizer {
    */
   public encodeHTML(value: string): string {
     return String(value).replace(/[&<>"'\/]/g, (s) => {
-      return this._entityMap[s];
+      return this._entityMap[s as keyof typeof this._entityMap];
     });
   }
 
@@ -395,10 +395,10 @@ export class Sanitizer {
    * @memberof Sanitizer
    */
   private _extendObjectOfArrays(objects: {}[]): {} {
-    const finalObj = {};
+    const finalObj: Record<string, any> = {};
 
     objects.forEach((obj) => {
-      Object.keys(obj).forEach((key) => {
+      (Object.keys(obj) as (keyof typeof obj)[]).forEach(<T extends keyof typeof obj>(key: T) => {
         if (Array.isArray(obj[key]) && Array.isArray(finalObj[key])) {
           finalObj[key] = finalObj[key].concat(obj[key]);
         } else {
@@ -441,8 +441,8 @@ export class Sanitizer {
         }
         return null;
       } else {
-        const keys = Object.keys(obj);
-        changedObj = keys.reduce((prev, key) => {
+        const keys = Object.keys(obj) as (keyof typeof obj)[];
+        changedObj = keys.reduce(<T extends keyof typeof obj>(prev: Record<keyof typeof obj, unknown>, key: T) => {
           const value = obj[key];
           const validation = this.validate(value, options);
           if (validation.isValid) {

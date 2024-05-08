@@ -40,7 +40,7 @@ describe("Sanitizer", () => {
   ];
 
   function getCSSOptions() {
-    const cssWhiteList = getDefaultCSSWhiteList();
+    const cssWhiteList: Record<string, any> = getDefaultCSSWhiteList();
     cssWhiteList["flex"] = true;
     cssWhiteList["flex-basis"] = true;
     cssWhiteList["flex-direction"] = true;
