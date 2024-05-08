@@ -208,7 +208,7 @@ export class Sanitizer {
       // Extend the defaults
       xssFilterOptions = Object.create(this.arcgisFilterOptions);
       xssFilterOptions.css = { whiteList: this.arcgisCSSWhiteList };
-      (Object.keys(filterOptions) as Array<keyof XSS.IFilterXSSOptions>).forEach(<T extends keyof XSS.IFilterXSSOptions>(key: T) => {
+      (Object.keys(filterOptions) as (keyof XSS.IFilterXSSOptions)[]).forEach(<T extends keyof XSS.IFilterXSSOptions>(key: T) => {
         if (key === "whiteList") {
           // Extend the whitelist by concatenating arrays
           xssFilterOptions.whiteList = this._extendObjectOfArrays([
@@ -398,7 +398,7 @@ export class Sanitizer {
     const finalObj: Record<string, any> = {};
 
     objects.forEach((obj) => {
-      (Object.keys(obj) as Array<keyof typeof obj>).forEach(<T extends keyof typeof obj>(key: T) => {
+      (Object.keys(obj) as (keyof typeof obj)[]).forEach(<T extends keyof typeof obj>(key: T) => {
         if (Array.isArray(obj[key]) && Array.isArray(finalObj[key])) {
           finalObj[key] = finalObj[key].concat(obj[key]);
         } else {
@@ -441,7 +441,7 @@ export class Sanitizer {
         }
         return null;
       } else {
-        const keys = Object.keys(obj) as Array<keyof typeof obj>;
+        const keys = Object.keys(obj) as (keyof typeof obj)[];
         changedObj = keys.reduce(<T extends keyof typeof obj>(prev: Record<keyof typeof obj, unknown>, key: T) => {
           const value = obj[key];
           const validation = this.validate(value, options);
