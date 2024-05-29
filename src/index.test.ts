@@ -50,7 +50,7 @@ describe("Sanitizer", () => {
     cssWhiteList["flex-wrap"] = true;
     cssWhiteList["line-height"] = true;
     cssWhiteList["justify-content"] = true;
-    cssWhiteList["overflow"] = true;    
+    cssWhiteList["overflow"] = true;
     return { whiteList: cssWhiteList };
   }
 
