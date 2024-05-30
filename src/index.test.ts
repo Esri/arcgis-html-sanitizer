@@ -49,6 +49,7 @@ describe("Sanitizer", () => {
     cssWhiteList["flex-shrink"] = true;
     cssWhiteList["flex-wrap"] = true;
     cssWhiteList["line-height"] = true;
+    cssWhiteList["justify-content"] = true;
     cssWhiteList["overflow"] = true;
     return { whiteList: cssWhiteList };
   }
@@ -646,6 +647,7 @@ describe("Sanitizer", () => {
       "flex-grow": true,
       "flex-shrink": true,
       "flex-wrap": true,
+      "justify-content": true,
       "line-height": true,
       "overflow": true
     };

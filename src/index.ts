@@ -137,6 +137,7 @@ export class Sanitizer {
     "flex-shrink": true,
     "flex-wrap": true,
     "line-height": true,
+    "justify-content": true,
     "overflow": true
   };
   public readonly allowedProtocols: string[] = [
