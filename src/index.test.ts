@@ -603,9 +603,12 @@ describe("Sanitizer", () => {
     const aExpected = "Cows &lt;5";
     const b = "Cows < 5";
     const bExpected = "Cows &lt; 5";
+    const c = "outer<script>inner</script>";
+    const cExpected = "outerinner";
 
     expect(sanitizer.sanitize(a)).toBe(aExpected);
     expect(sanitizer.sanitize(b)).toBe(bExpected);
+    expect(sanitizer.sanitize(c)).toBe(cExpected);
   });
 
   test("pre sanitizes contents", () => {
