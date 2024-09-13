@@ -130,6 +130,8 @@ export class Sanitizer {
   };
   public readonly arcgisCSSWhiteList: ICSSWhiteList = {
     ...xss.getDefaultCSSWhiteList() as any,
+    "align-items": true,
+    "align-self": true,
     "flex": true,
     "flex-basis": true,
     "flex-direction": true,
@@ -154,12 +156,10 @@ export class Sanitizer {
     "grid-template-areas": true,
     "grid-template-columns": true,
     "grid-template-rows": true,
-    "line-height": true,
     "justify-content": true,
     "justify-items": true,
     "justify-self": true,
-    "align-items": true,
-    "align-self": true,
+    "line-height": true,
     "overflow": true
   };
   public readonly allowedProtocols: string[] = [

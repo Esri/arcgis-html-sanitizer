@@ -40,17 +40,41 @@ describe("Sanitizer", () => {
   ];
 
   function getCSSOptions() {
+    const enabledAttributes = [
+      "flex",
+      "flex-basis",
+      "flex-direction",
+      "flex-flow",
+      "flex-grow",
+      "flex-shrink",
+      "flex-wrap",
+      "float",
+      "gap",
+      "grid",
+      "grid-area",
+      "grid-auto-columns",
+      "grid-auto-flow",
+      "grid-auto-rows",
+      "grid-column",
+      "grid-column-end",
+      "grid-column-start",
+      "grid-row",
+      "grid-row-end",
+      "grid-row-start",
+      "grid-template",
+      "grid-template-areas",
+      "grid-template-columns",
+      "grid-template-rows",
+      "line-height",
+      "justify-content",
+      "justify-items",
+      "justify-self",
+      "align-items",
+      "align-self",
+      "overflow",
+    ];
     const cssWhiteList: Record<string, any> = getDefaultCSSWhiteList();
-    cssWhiteList["flex"] = true;
-    cssWhiteList["flex-basis"] = true;
-    cssWhiteList["flex-direction"] = true;
-    cssWhiteList["flex-flow"] = true;
-    cssWhiteList["flex-grow"] = true;
-    cssWhiteList["flex-shrink"] = true;
-    cssWhiteList["flex-wrap"] = true;
-    cssWhiteList["line-height"] = true;
-    cssWhiteList["justify-content"] = true;
-    cssWhiteList["overflow"] = true;
+    enabledAttributes.forEach((key) => { cssWhiteList[key] = true});
     return { whiteList: cssWhiteList };
   }
 
@@ -641,19 +665,7 @@ describe("Sanitizer", () => {
 
   test("public css filter", () => {
     const sanitizer = new Sanitizer();
-    const expectedWhitelist = {
-      ...getDefaultCSSWhiteList(),
-      "flex": true,
-      "flex-basis": true,
-      "flex-direction": true,
-      "flex-flow": true,
-      "flex-grow": true,
-      "flex-shrink": true,
-      "flex-wrap": true,
-      "justify-content": true,
-      "line-height": true,
-      "overflow": true
-    };
+    const expectedWhitelist = getCSSOptions().whiteList;
     expect(sanitizer.arcgisCSSWhiteList).toEqual(expectedWhitelist);
   });
 
