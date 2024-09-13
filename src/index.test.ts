@@ -49,6 +49,7 @@ describe("Sanitizer", () => {
     cssWhiteList["flex-shrink"] = true;
     cssWhiteList["flex-wrap"] = true;
     cssWhiteList["line-height"] = true;
+    cssWhiteList["justify-content"] = true;
     cssWhiteList["overflow"] = true;
     return { whiteList: cssWhiteList };
   }
@@ -602,9 +603,12 @@ describe("Sanitizer", () => {
     const aExpected = "Cows &lt;5";
     const b = "Cows < 5";
     const bExpected = "Cows &lt; 5";
+    const c = "outer<script>inner</script>";
+    const cExpected = "outerinner";
 
     expect(sanitizer.sanitize(a)).toBe(aExpected);
     expect(sanitizer.sanitize(b)).toBe(bExpected);
+    expect(sanitizer.sanitize(c)).toBe(cExpected);
   });
 
   test("pre sanitizes contents", () => {
@@ -646,6 +650,7 @@ describe("Sanitizer", () => {
       "flex-grow": true,
       "flex-shrink": true,
       "flex-wrap": true,
+      "justify-content": true,
       "line-height": true,
       "overflow": true
     };
