@@ -7,6 +7,7 @@
  * The MIT License, see
  * https://github.com/leizongmin/js-xss/blob/master/LICENSE for details
  * */
+/// <reference types="xss" preserve="true" />
 import * as xss from "xss";
 import isPlainObject from "./plainObject";
 
