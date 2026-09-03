@@ -275,6 +275,36 @@ describe("Sanitizer", () => {
     );
   });
 
+  test("strips excluded attributes from allowed SVG tags", () => {
+    const sanitizer = new Sanitizer();
+    const excludedAttributes = [
+      {
+        input: '<image href="https://example.com/image.svg"></image>',
+        expected: "<image></image>",
+      },
+      {
+        input: '<use xlink:href="#icon"></use>',
+        expected: "<use></use>",
+      },
+      {
+        input: '<path style="display:none"></path>',
+        expected: "<path></path>",
+      },
+      {
+        input: '<animate begin="0s" end="1s" attributeName="x" from="0" to="1" values="0;1"></animate>',
+        expected: "<animate></animate>",
+      },
+      {
+        input: '<svg xml:base="https://example.com/"></svg>',
+        expected: "<svg></svg>",
+      },
+    ];
+
+    excludedAttributes.forEach(({ input, expected }) => {
+      expect(sanitizer.sanitize(input)).toBe(expected);
+    });
+  });
+
   test("optionally allow undefined values to pass sanitizer", () => {
     const sanitizer = new Sanitizer();
     // tslint:disable-next-line:no-string-literal
