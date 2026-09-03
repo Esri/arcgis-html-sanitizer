@@ -228,6 +228,52 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(new Error("test"))).toBe(null);
   });
 
+  test("allows SVG tags and safe attributes", () => {
+    const sanitizer = new Sanitizer();
+    const html =
+      '<svg width="24" height="24" onload="alert(1)"><path d="M0 0h24v24H0z" /></svg><script>alert(1)</script><style>body { display: none; }</style>';
+
+    expect(sanitizer.sanitize(html)).toBe(
+      '<svg width="24" height="24"><path d="M0 0h24v24H0z" /></svg>&lt;script&gt;alert(1)&lt;/script&gt;&lt;style&gt;body { display: none; }&lt;/style&gt;'
+    );
+
+    expect(
+      sanitizer.sanitize(
+        '<svg viewBox="not numbers" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" onload="alert(1)"></svg>'
+      )
+    ).toBe(
+      '<svg viewBox="not numbers" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"></svg>'
+    );
+
+    const onTagAttr = sanitizer.arcgisFilterOptions.onTagAttr!;
+    expect(
+      onTagAttr(
+        "svg",
+        "viewbox",
+        '0 0 24 24" onload="alert(1)',
+        true
+      )
+    ).toBe('viewBox="0 0 24 24&quot; onload=&quot;alert(1)"');
+    expect(
+      onTagAttr(
+        "svg",
+        "preserveaspectratio",
+        'xMidYMid meet" onload="alert(1)',
+        true
+      )
+    ).toBe(
+      'preserveAspectRatio="xMidYMid meet&quot; onload=&quot;alert(1)"'
+    );
+
+    expect(
+      sanitizer.sanitize(
+        `<svg width='24" onload="alert(1)'><path d='M0 0" onload="alert(1)' /></svg>`
+      )
+    ).toBe(
+      '<svg width="24&quot; onload=&quot;alert(1)"><path d="M0 0&quot; onload=&quot;alert(1)" /></svg>'
+    );
+  });
+
   test("optionally allow undefined values to pass sanitizer", () => {
     const sanitizer = new Sanitizer();
     // tslint:disable-next-line:no-string-literal

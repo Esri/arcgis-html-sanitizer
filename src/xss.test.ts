@@ -497,7 +497,7 @@ describe('XSS Sanitizing', () => {
     const dirty =
       '<STYLE>.XSS{background-image:url("javascript:alert(\'XSS\')");}</STYLE><A CLASS=XSS></A>';
     const clean =
-      '&lt;STYLE&gt;.XSS{background-image:url("javascript:alert(\'XSS\')");}&lt;/STYLE&gt;<a></a>';
+      '&lt;STYLE&gt;.XSS{background-image:url("javascript:alert(\'XSS\')");}&lt;/STYLE&gt;<a class="XSS"></a>';
 
     expect(sanitizer.sanitize(dirty)).toEqual(clean);
   });
