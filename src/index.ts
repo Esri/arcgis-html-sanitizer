@@ -155,7 +155,7 @@ export class Sanitizer {
     figure: ["style"],
     font: ["color", "face", "size", "style"],
     footer: ["style"],
-    g: SafeSVGPresentationAttrs,
+    g: SafeSVGPresentationAttrs.slice(),
     h1: ["style"],
     h2: ["style"],
     h3: ["style"],
