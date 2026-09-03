@@ -72,6 +72,7 @@ describe("Sanitizer", () => {
       "align-items",
       "align-self",
       "overflow",
+      "row-gap",
     ];
     const cssWhiteList: Record<string, any> = getDefaultCSSWhiteList();
     enabledAttributes.forEach((key) => { cssWhiteList[key] = true});
@@ -702,6 +703,8 @@ describe("Sanitizer", () => {
       "flex-grow:1;",
       "flex-shrink:1;",
       "flex-wrap:wrap;",
+      "gap:1rem;",
+      "row-gap:1rem;",
     ];
     flexProperties.forEach((prop) => {
       const value = `<div style="${prop}">Flex property test</div>`;

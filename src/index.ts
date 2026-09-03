@@ -268,7 +268,8 @@ export class Sanitizer {
     "justify-items": true,
     "justify-self": true,
     "line-height": true,
-    "overflow": true
+    "overflow": true,
+    "row-gap": true
   };
   public readonly allowedProtocols: string[] = [
     "http",
