@@ -574,6 +574,7 @@ describe("Sanitizer", () => {
     const abbr = `<abbr title="Cascading Style Sheets">CSS</abbr>`;
     const ol = "<ol><li>List Item 1</li><li>List Item 2</li></ol>";
     const safeDiv = '<div style="display:none;">Text content</div>';
+    const strippedClass = '<div class="content">Text content</div>';
     const unsafeDiv = '<div onerror="alert(1)">Text content</div>';
     const strippedDiv = "<div>Text content</div>";
     const audio = `<audio controls><source src="http://someurl.tld/path/to/audio/file.mp3" type="audio/mpeg"></audio>`;
@@ -594,6 +595,7 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(abbr)).toBe(abbr);
     expect(sanitizer.sanitize(ol)).toBe(ol);
     expect(sanitizer.sanitize(safeDiv)).toBe(safeDiv);
+    expect(sanitizer.sanitize(strippedClass)).toBe('<div>Text content</div>');
     expect(sanitizer.sanitize(unsafeDiv)).toBe(strippedDiv);
     expect(sanitizer.sanitize(audio)).toBe(audio);
     expect(sanitizer.sanitize(stripAudioSrc)).toBe(strippedAudioSrc);

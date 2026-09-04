@@ -52,7 +52,6 @@ const SafeAttrs = [
   "border",
   "cellpadding",
   "cellspacing",
-  "class",
   "color",
   "cols",
   "colspan",
