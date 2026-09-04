@@ -595,7 +595,7 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(abbr)).toBe(abbr);
     expect(sanitizer.sanitize(ol)).toBe(ol);
     expect(sanitizer.sanitize(safeDiv)).toBe(safeDiv);
-    expect(sanitizer.sanitize(strippedClass)).toBe('<div>Text content</div>');
+    expect(sanitizer.sanitize(strippedClass)).toBe(strippedDiv);
     expect(sanitizer.sanitize(unsafeDiv)).toBe(strippedDiv);
     expect(sanitizer.sanitize(audio)).toBe(audio);
     expect(sanitizer.sanitize(stripAudioSrc)).toBe(strippedAudioSrc);

@@ -176,7 +176,7 @@ export class Sanitizer {
     nav: ["style"],
     ol: [],
     p: ["style"],
-    path: SafeSVGPresentationAttrs,
+    path: SafeSVGPresentationAttrs.slice(),
     pattern: [],
     polygon: SafeSVGPolygonAttrs.concat(SafeSVGPresentationAttrs),
     polyline: SafeSVGPolygonAttrs.concat(SafeSVGPresentationAttrs),
