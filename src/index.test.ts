@@ -72,6 +72,7 @@ describe("Sanitizer", () => {
       "align-items",
       "align-self",
       "overflow",
+      "row-gap",
     ];
     const cssWhiteList: Record<string, any> = getDefaultCSSWhiteList();
     enabledAttributes.forEach((key) => { cssWhiteList[key] = true});
@@ -226,6 +227,97 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(arguments)).toBe(null);
     expect(sanitizer.sanitize(() => "test")).toBe(null);
     expect(sanitizer.sanitize(new Error("test"))).toBe(null);
+  });
+
+  test("allows SVG tags and safe attributes", () => {
+    const sanitizer = new Sanitizer();
+    const html =
+      '<svg width="24" height="24" onload="alert(1)"><path d="M0 0h24v24H0z" /></svg><script>alert(1)</script><style>body { display: none; }</style>';
+
+    expect(sanitizer.sanitize(html)).toBe(
+      '<svg width="24" height="24"><path d="M0 0h24v24H0z" /></svg>&lt;script&gt;alert(1)&lt;/script&gt;&lt;style&gt;body { display: none; }&lt;/style&gt;'
+    );
+
+    expect(
+      sanitizer.sanitize(
+        '<svg viewBox="not numbers" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" onload="alert(1)"></svg>'
+      )
+    ).toBe(
+      '<svg viewBox="not numbers" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"></svg>'
+    );
+
+    const onTagAttr = sanitizer.arcgisFilterOptions.onTagAttr!;
+    expect(
+      onTagAttr(
+        "svg",
+        "viewbox",
+        '0 0 24 24" onload="alert(1)',
+        true
+      )
+    ).toBe('viewBox="0 0 24 24&quot; onload=&quot;alert(1)"');
+    expect(
+      onTagAttr(
+        "svg",
+        "preserveaspectratio",
+        'xMidYMid meet" onload="alert(1)',
+        true
+      )
+    ).toBe(
+      'preserveAspectRatio="xMidYMid meet&quot; onload=&quot;alert(1)"'
+    );
+
+    expect(
+      sanitizer.sanitize(
+        `<svg width='24" onload="alert(1)'><path d='M0 0" onload="alert(1)' /></svg>`
+      )
+    ).toBe(
+      '<svg width="24&quot; onload=&quot;alert(1)"><path d="M0 0&quot; onload=&quot;alert(1)" /></svg>'
+    );
+  });
+
+  test("strips excluded attributes from allowed SVG tags", () => {
+    const sanitizer = new Sanitizer();
+    const excludedAttributes = [
+      {
+        input: '<image href="https://example.com/image.svg"></image>',
+        expected: "<image></image>",
+      },
+      {
+        input: '<use xlink:href="#icon"></use>',
+        expected: "<use></use>",
+      },
+      {
+        input: '<path style="display:none"></path>',
+        expected: "<path></path>",
+      },
+      {
+        input: '<animate begin="0s" end="1s" attributeName="x" from="0" to="1" values="0;1"></animate>',
+        expected: "<animate></animate>",
+      },
+      {
+        input: '<svg xml:base="https://example.com/"></svg>',
+        expected: "<svg></svg>",
+      },
+    ];
+
+    excludedAttributes.forEach(({ input, expected }) => {
+      expect(sanitizer.sanitize(input)).toBe(expected);
+    });
+  });
+
+  test("allows safe attributes on supported tags", () => {
+    const sanitizer = new Sanitizer();
+    const onTagAttr = sanitizer.arcgisFilterOptions.onTagAttr!;
+
+    expect(onTagAttr("div", "title", "allowed", false)).toBe(
+      'title="allowed"'
+    );
+    expect(
+      sanitizer.sanitize('<div title="allowed" onload="alert(1)">Text</div>')
+    ).toBe('<div title="allowed">Text</div>');
+    expect(
+      sanitizer.sanitize('<path width="24" title="allowed"></path>')
+    ).toBe('<path width="24" title="allowed"></path>');
   });
 
   test("optionally allow undefined values to pass sanitizer", () => {
@@ -497,6 +589,7 @@ describe("Sanitizer", () => {
     const abbr = `<abbr title="Cascading Style Sheets">CSS</abbr>`;
     const ol = "<ol><li>List Item 1</li><li>List Item 2</li></ol>";
     const safeDiv = '<div style="display:none;">Text content</div>';
+    const strippedClass = '<div class="content">Text content</div>';
     const unsafeDiv = '<div onerror="alert(1)">Text content</div>';
     const strippedDiv = "<div>Text content</div>";
     const audio = `<audio controls><source src="http://someurl.tld/path/to/audio/file.mp3" type="audio/mpeg"></audio>`;
@@ -517,6 +610,7 @@ describe("Sanitizer", () => {
     expect(sanitizer.sanitize(abbr)).toBe(abbr);
     expect(sanitizer.sanitize(ol)).toBe(ol);
     expect(sanitizer.sanitize(safeDiv)).toBe(safeDiv);
+    expect(sanitizer.sanitize(strippedClass)).toBe(strippedDiv);
     expect(sanitizer.sanitize(unsafeDiv)).toBe(strippedDiv);
     expect(sanitizer.sanitize(audio)).toBe(audio);
     expect(sanitizer.sanitize(stripAudioSrc)).toBe(strippedAudioSrc);
@@ -656,6 +750,8 @@ describe("Sanitizer", () => {
       "flex-grow:1;",
       "flex-shrink:1;",
       "flex-wrap:wrap;",
+      "gap:1rem;",
+      "row-gap:1rem;",
     ];
     flexProperties.forEach((prop) => {
       const value = `<div style="${prop}">Flex property test</div>`;
