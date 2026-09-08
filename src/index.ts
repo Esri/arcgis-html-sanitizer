@@ -306,15 +306,7 @@ export class Sanitizer {
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
-    onTagAttr: (
-      _tag: string,
-      name: string,
-      value: string,
-      isWhiteAttr: boolean
-    ): string | void => {
-      if (!isWhiteAttr) {
-        return;
-      }
+    onTagAttr: (_tag: string, name: string, value: string): string | void => {
       // js-xss lowercases attribute names, so restore case-sensitive SVG names.
       if (_tag === "svg") {
         if (name === "viewbox") {
