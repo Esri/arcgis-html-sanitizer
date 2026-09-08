@@ -305,6 +305,19 @@ describe("Sanitizer", () => {
     });
   });
 
+  test("preserves per-tag attribute whitelists for safe attributes", () => {
+    const sanitizer = new Sanitizer();
+    const onTagAttr = sanitizer.arcgisFilterOptions.onTagAttr!;
+
+    expect(onTagAttr("div", "title", "not allowed", false)).toBeUndefined();
+    expect(
+      sanitizer.sanitize('<div title="not allowed">Text</div>')
+    ).toBe("<div>Text</div>");
+    expect(
+      sanitizer.sanitize('<path width="24" title="not allowed"></path>')
+    ).toBe("<path></path>");
+  });
+
   test("optionally allow undefined values to pass sanitizer", () => {
     const sanitizer = new Sanitizer();
     // tslint:disable-next-line:no-string-literal

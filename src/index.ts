@@ -176,7 +176,7 @@ export class Sanitizer {
     nav: ["style"],
     ol: [],
     p: ["style"],
-    path: SafeSVGPresentationAttrs.slice(),
+    path: ["d"].concat(SafeSVGPresentationAttrs),
     pattern: [],
     polygon: SafeSVGPolygonAttrs.concat(SafeSVGPresentationAttrs),
     polyline: SafeSVGPolygonAttrs.concat(SafeSVGPresentationAttrs),
@@ -191,7 +191,13 @@ export class Sanitizer {
     sub: ["style"],
     summary: ["style"],
     sup: ["style"],
-    svg: ["preserveaspectratio", "viewbox", "xmlns"].concat(SafeSVGPresentationAttrs),
+    svg: [
+      "height",
+      "preserveaspectratio",
+      "viewbox",
+      "width",
+      "xmlns",
+    ].concat(SafeSVGPresentationAttrs),
     switch: [],
     symbol: [],
     table: ["border", "cellpadding", "cellspacing", "height", "style", "width"],
@@ -300,7 +306,15 @@ export class Sanitizer {
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
-    onTagAttr: (_tag: string, name: string, value: string): string | void => {
+    onTagAttr: (
+      _tag: string,
+      name: string,
+      value: string,
+      isWhiteAttr: boolean
+    ): string | void => {
+      if (!isWhiteAttr) {
+        return;
+      }
       // js-xss lowercases attribute names, so restore case-sensitive SVG names.
       if (_tag === "svg") {
         if (name === "viewbox") {
