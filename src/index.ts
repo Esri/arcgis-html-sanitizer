@@ -40,6 +40,86 @@ export interface ISanitizeOptions {
 }
 
 /**
+ * Safe attrs are based on https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md#xss-prevention-rules-summary
+ */
+// The current entries are considered low risk because they are not URL, CSS, or event attributes.
+// Values bypass normal attribute validation but are escaped before returning the attribute.
+const SafeAttrs = [
+  "align",
+  "alink",
+  "alt",
+  "bgcolor",
+  "border",
+  "cellpadding",
+  "cellspacing",
+  "color",
+  "cols",
+  "colspan",
+  "coords",
+  "d",
+  "dir",
+  "face",
+  "height",
+  "hspace",
+  "ismap",
+  "lang",
+  "marginheight",
+  "marginwidth",
+  "multiple",
+  "nohref",
+  "noresize",
+  "noshade",
+  "nowrap",
+  "ref",
+  "rel",
+  "rev",
+  "rows",
+  "rowspan",
+  "scrolling",
+  "shape",
+  "span",
+  "summary",
+  "tabindex",
+  "title",
+  "usemap",
+  "valign",
+  "value",
+  "vlink",
+  "vspace",
+  "width",
+];
+
+const SafeSVGPresentationAttrs = [
+  "color",
+  "display",
+  "fill-opacity",
+  "font-family",
+  "font-size",
+  "font-style",
+  "font-weight",
+  "opacity",
+  "shape-rendering",
+  "stroke-dasharray",
+  "stroke-dashoffset",
+  "stroke-linecap",
+  "stroke-linejoin",
+  "stroke-miterlimit",
+  "stroke-opacity",
+  "stroke-width",
+  "text-anchor",
+  "text-rendering",
+  "transform",
+  "visibility",
+];
+
+const SafeSVGCircleAttrs = ["cx", "cy", "r"];
+const SafeSVGEllipseAttrs = ["cx", "cy", "rx", "ry"];
+const SafeSVGLineAttrs = ["x1", "x2", "y1", "y2"];
+const SafeSVGPolygonAttrs = ["points"];
+const SafeSVGRectAttrs = ["rx", "ry", "x", "y"];
+const SafeSVGTextAttrs = ["dx", "dy", "x", "y"];
+
+/**
  * The Sanitizer Class
  *
  * @export
@@ -50,24 +130,31 @@ export class Sanitizer {
   public readonly arcgisWhiteList: IWhiteList = {
     a: ["href", "style", "target"],
     abbr: ["title"],
+    animate: [],
+    animatetransform: [],
     article: ["style"],
     aside: ["style"],
     audio: ["autoplay", "controls", "loop", "muted", "preload"],
     b: [],
     blockquote: ["style"],
     br: [],
+    circle: SafeSVGCircleAttrs.concat(SafeSVGPresentationAttrs),
+    clippath: [],
     code: ["style"],
     dd: ["style"],
+    defs: [],
     del: ["style"],
     details: ["open", "style"],
     div: ["align", "aria-hidden", "aria-label", "style"],
     dl: ["style"],
     dt: ["style"],
+    ellipse: SafeSVGEllipseAttrs.concat(SafeSVGPresentationAttrs),
     em: [],
     figcaption: ["style"],
     figure: ["style"],
     font: ["color", "face", "size", "style"],
     footer: ["style"],
+    g: SafeSVGPresentationAttrs.slice(),
     h1: ["style"],
     h2: ["style"],
     h3: ["style"],
@@ -77,21 +164,42 @@ export class Sanitizer {
     header: ["style"],
     hr: [],
     i: [],
+    image: [],
     img: ["alt", "border", "height", "src", "style", "width"],
     li: [],
+    line: SafeSVGLineAttrs.concat(SafeSVGPresentationAttrs),
+    lineargradient: [],
     main: ["style"],
     mark: ["style"],
+    marker: [],
+    mask: [],
     nav: ["style"],
     ol: [],
     p: ["style"],
+    path: ["d"].concat(SafeSVGPresentationAttrs),
+    pattern: [],
+    polygon: SafeSVGPolygonAttrs.concat(SafeSVGPresentationAttrs),
+    polyline: SafeSVGPolygonAttrs.concat(SafeSVGPresentationAttrs),
     pre: ["style"],
+    radialgradient: [],
+    rect: SafeSVGRectAttrs.concat(SafeSVGPresentationAttrs),
     section: ["style"],
     source: ["media", "src", "type"],
     span: ["aria-hidden", "aria-label", "style"],
+    stop: ["offset", "stop-color", "stop-opacity"],
     strong: [],
     sub: ["style"],
     summary: ["style"],
     sup: ["style"],
+    svg: [
+      "height",
+      "preserveaspectratio",
+      "viewbox",
+      "width",
+      "xmlns",
+    ].concat(SafeSVGPresentationAttrs),
+    switch: [],
+    symbol: [],
     table: ["border", "cellpadding", "cellspacing", "height", "style", "width"],
     tbody: [],
     tr: ["align", "height", "style", "valign"],
@@ -115,9 +223,13 @@ export class Sanitizer {
       "valign",
       "width",
     ],
+    text: SafeSVGTextAttrs.concat(SafeSVGPresentationAttrs),
+    textpath: [],
     time: ["style"],
+    tspan: SafeSVGTextAttrs.concat(SafeSVGPresentationAttrs),
     u: [],
     ul: [],
+    use: [],
     video: [
       "autoplay",
       "controls",
@@ -161,7 +273,8 @@ export class Sanitizer {
     "justify-items": true,
     "justify-self": true,
     "line-height": true,
-    "overflow": true
+    "overflow": true,
+    "row-gap": true
   };
   public readonly allowedProtocols: string[] = [
     "http",
@@ -193,6 +306,23 @@ export class Sanitizer {
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
+    onTagAttr: (_tag: string, name: string, value: string): string | void => {
+      // js-xss lowercases attribute names, so restore case-sensitive SVG names.
+      if (_tag === "svg") {
+        if (name === "viewbox") {
+          return `viewBox="${xss.escapeAttrValue(value)}"`;
+        }
+        if (name === "preserveaspectratio") {
+          return `preserveAspectRatio="${xss.escapeAttrValue(value)}"`;
+        }
+      }
+      // These low-risk attributes bypass normal value filtering, but escaping is
+      // still required to prevent their values from creating new attributes.
+      if (SafeAttrs.indexOf(name) > -1) {
+        return `${name}="${xss.escapeAttrValue(value)}"`;
+      }
+      return;
+    },
     safeAttrValue: (
       tag: string,
       name: string,
