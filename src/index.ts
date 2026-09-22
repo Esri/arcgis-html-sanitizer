@@ -303,6 +303,8 @@ export class Sanitizer {
     "awbs",
     "gropen",
     "radarscope",
+    "clickmobile",
+    "com.salesforce.fieldservice"
   ];
   public readonly arcgisFilterOptions: XSS.IFilterXSSOptions = {
     allowCommentTag: true,
